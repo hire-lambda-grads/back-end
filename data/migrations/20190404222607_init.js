@@ -21,20 +21,17 @@ exports.up = function(knex, Promise) {
         .unsigned()
         .references("roles.id")
         .notNullable()
-        .onDelete("CASCADE")
+        .onDelete("RESTRICT")
         .onUpdate("CASCADE");
 
       //Username
       tbl
-        .string("username", 12)
+        .string("username", 20)
         .notNullable()
         .unique();
 
       //Password
-      tbl
-        .string("password")
-        .notNullable()
-        .unique();
+      tbl.string("password").notNullable();
 
       //First Name
       tbl.string("first_name").notNullable();
@@ -76,7 +73,7 @@ exports.up = function(knex, Promise) {
         .unsigned()
         .references("cohort_types.id")
         .notNullable()
-        .onDelete("CASCADE")
+        .onDelete("RESTRICT")
         .onUpdate("CASCADE");
 
       //Cohort Name
@@ -111,7 +108,7 @@ exports.up = function(knex, Promise) {
         .unsigned()
         .notNullable()
         .references("cohorts.id")
-        .onDelete("CASCADE")
+        .onDelete("RESTRICT")
         .onUpdate("CASCADE");
 
       //Profile Pic
@@ -168,8 +165,8 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
   return knex.schema
-    .dropTableIfExists("staff")
-    .dropTableIfExists("recruiters")
+    .dropTableIfExists("accounts")
+    .dropTableIfExists("hired")
     .dropTableIfExists("students")
     .dropTableIfExists("roles")
     .dropTableIfExists("cohorts")
