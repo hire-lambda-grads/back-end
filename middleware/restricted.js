@@ -1,4 +1,4 @@
-const checkToken = require("../auth/token-handlers").checkToken;
+// const checkToken = require("../auth/token-handlers").checkToken;
 
 module.exports = (req, res, next) => {
   const token = req.headers.authorization;
