@@ -1,3 +1,11 @@
 const db = require("../../data/config");
 
-module.exports = {};
+module.exports = {
+  findUser
+};
+
+async function findUser(username) {
+  return db("accounts")
+    .where({ username })
+    .first();
+}
