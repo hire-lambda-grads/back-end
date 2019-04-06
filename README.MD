@@ -24,14 +24,14 @@ _HTTP method: [POST]_
 
 ### Body
 
-| name       | type    | required | description        |
-| ---------- | ------- | -------- | ------------------ |
-| username   | String  | Yes      | Must be unique     |
-| email      | String  | Yes      | Must be unique     |
-| first_name | String  | Yes      |                    |
-| last_name  | String  | Yes      |                    |
-| password   | String  | Yes      |                    |
-| role_id    | Integer | Yes      | [Role](#get-roles) |
+| name       | type    | required | description           |
+| ---------- | ------- | -------- | --------------------- |
+| username   | String  | Yes      | Must be unique        |
+| email      | String  | Yes      | Must be unique        |
+| first_name | String  | Yes      |                       |
+| last_name  | String  | Yes      |                       |
+| password   | String  | Yes      |                       |
+| role_id    | Integer | Yes      | [Role ID](#get-roles) |
 
 _example:_
 
