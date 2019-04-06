@@ -5,6 +5,17 @@ const cloudParser = require("../../config/cloudinary");
 
 module.exports = router;
 
+router.route("/cards").get(async (req, res) => {
+  try {
+    const students = await actions.getStudentCards();
+    res.status(200).json(students);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Something went wrong retrieving the student cards." });
+  }
+});
+
 //Cloudinary example
 // server.post('/api/images', cloudParser.single("image"), (req, res) => {
 //     console.log(req.file) // to see what is returned to you
