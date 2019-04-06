@@ -2,13 +2,13 @@
 
 ## NAVIGATION
 
-[Register User](#register)
-[Login](#login)
-[Get All Students](#get-students)
-[Get Single Student](#get-single-student)
-[Update Student Information](#edit-student)
-[Delete An Account](#delete-account)
-[Get Student Locations](#get-student-locations)
+[Register User](#register)<br>
+[Login](#login)<br>
+[Get All Students](#get-students)<br>
+[Get Single Student](#get-single-student)<br>
+[Update Student Information](#edit-student)<br>
+[Delete An Account](#delete-account)<br>
+[Get Student Locations](#get-student-locations)<br>
 
 # Base URL
 
