@@ -8,6 +8,19 @@ module.exports = router;
 
 router
   .route("/update")
+  .get(restricted, async (req, res) => {
+    const account_id = req.token.subject;
+    try {
+      const student = await actions.getStudent(account_id);
+      res.status(200).json(student);
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Something went wrong retrieving student information."
+        });
+    }
+  })
   .post(restricted, cloudParser.single("image"), async (req, res) => {
     const info = req.body;
     const account_id = req.token.subject;
