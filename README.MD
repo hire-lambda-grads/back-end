@@ -2,11 +2,17 @@
 
 ## NAVIGATION
 
-[Register User](#register) | [Login](#login) | [Get All Students](#get-students) | [Get Single Student](#get-single-student) | [Update Student Information](#edit-student) | [Delete An Account](#delete-account) | [Get Student Locations](#get-student-locations) | [Examples of Headers](#headers-examples)
+[Register User](#register)
+[Login](#login)
+[Get All Students](#get-students)
+[Get Single Student](#get-single-student)
+[Update Student Information](#edit-student)
+[Delete An Account](#delete-account)
+[Get Student Locations](#get-student-locations)
 
 # Base URL
 
-- https://halg-backend.herokuapp.com/
+ **https://halg-backend.herokuapp.com/**
 
 ## REGISTER <a name="register"></a>
 
