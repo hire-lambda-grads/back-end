@@ -5,5 +5,5 @@ module.exports = {
 };
 
 function getStudentCards() {
-  return db.raw("select * from accounts");
+  return db("accounts");
 }
