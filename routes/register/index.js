@@ -6,15 +6,14 @@ router.route("/").post(async (req, res) => {
   const user = req.body;
   if (
     user &&
-    user.username &&
+    user.email &&
     user.password &&
     user.first_name &&
     user.last_name &&
-    user.email &&
     user.role_id
   ) {
     try {
-      const count = await actions.addUser(user);
+      const count = await actions.addUser(user, user.role_id);
       if (count) {
         res.status(201).json({ message: "User successfully added." });
       } else {

@@ -4,8 +4,8 @@ module.exports = {
   findUser
 };
 
-async function findUser(username) {
+async function findUser(email) {
   return db("accounts")
-    .where({ username })
+    .where({ email })
     .first();
 }

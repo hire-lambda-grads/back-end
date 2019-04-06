@@ -5,10 +5,10 @@ const actions = require("./login");
 const generateToken = require("../../auth/token-handlers").generateToken;
 
 router.route("/").post(async (req, res) => {
-  let { username, password } = req.body;
-  if (username && password) {
+  let { email, password } = req.body;
+  if (email && password) {
     try {
-      const user = await actions.findUser(username);
+      const user = await actions.findUser(email);
       if (user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user);
 

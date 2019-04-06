@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     const decToken = checkToken(token);
 
     if (decToken) {
-      req.role = decToken.role;
+      req.token = decToken;
       next();
     } else {
       res.status(401).json({ message: "Invalid token." });
