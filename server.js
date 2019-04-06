@@ -19,7 +19,7 @@ server.use("/api/auth/register", registerRouter);
 server.use("/api/students", restricted, studentsRouter);
 
 server.get("/", (req, res) => {
-  req.send("Welcome, please refer to the GitHub Docs to get started.");
+  res.send("Welcome, please refer to the GitHub docs to get started.");
 });
 
 module.exports = server;
