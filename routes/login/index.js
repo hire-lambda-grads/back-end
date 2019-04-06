@@ -9,8 +9,11 @@ router.route("/").post(async (req, res) => {
   if (username && password) {
     try {
       const user = await actions.findUser(username);
+      console.log(user);
       if (user && bcrypt.compareSync(password, user.password)) {
+        console.log("Password passed. Into Token and Res 200 block");
         const token = generateToken(user);
+        console.log(token, "Token passed");
         res.status(200).json({ message: "Welcome!", token });
       } else {
         res.status(401).json({ message: "Invalid credentials." });
