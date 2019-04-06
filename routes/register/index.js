@@ -16,7 +16,7 @@ router.route("/").post(async (req, res) => {
     try {
       const count = await actions.addUser(user);
       if (count) {
-        res.status(200).json({ message: "User successfully added." });
+        res.status(201).json({ message: "User successfully added." });
       } else {
         res.status(400).json({ message: "The user already exists." });
       }
