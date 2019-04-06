@@ -2,7 +2,6 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 
-const restricted = require("./middleware/restricted");
 const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const studentsRouter = require("./routes/students");

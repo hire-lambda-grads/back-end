@@ -5,10 +5,10 @@
 [Register User](#register)<br>
 [Login](#login)<br>
 [Get All Students](#get-students)<br>
+[Get Student Locations](#get-student-locations)<br>
 [Get Single Student](#get-single-student)<br>
 [Update Student Information](#edit-student)<br>
 [Delete An Account](#delete-account)<br>
-[Get Student Locations](#get-student-locations)<br>
 
 # Base URL
 

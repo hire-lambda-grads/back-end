@@ -1,10 +1,7 @@
 exports.up = function(knex, Promise) {
   return knex.schema
     .createTable("roles", tbl => {
-      //PK
       tbl.increments();
-
-      //Role
       tbl
         .string("role")
         .notNullable()
@@ -12,10 +9,7 @@ exports.up = function(knex, Promise) {
     })
 
     .createTable("accounts", tbl => {
-      //PK
       tbl.increments();
-
-      //Role FK
       tbl
         .integer("role_id")
         .unsigned()
@@ -23,29 +17,13 @@ exports.up = function(knex, Promise) {
         .notNullable()
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
-
-      //Username
-      tbl
-        .string("username", 20)
-        .notNullable()
-        .unique();
-
-      //Password
-      tbl.string("password").notNullable();
-
-      //First Name
-      tbl.string("first_name").notNullable();
-
-      //Last Name
-      tbl.string("last_name").notNullable();
-
-      //Email
       tbl
         .string("email")
         .notNullable()
         .unique();
-
-      //Verified Student
+      tbl.string("password").notNullable();
+      tbl.string("first_name").notNullable();
+      tbl.string("last_name").notNullable();
       tbl
         .boolean("verified_student")
         .notNullable()
@@ -53,10 +31,7 @@ exports.up = function(knex, Promise) {
     })
 
     .createTable("cohort_types", tbl => {
-      //PK
       tbl.increments();
-
-      //Cohort type
       tbl
         .string("type")
         .notNullable()
@@ -64,10 +39,7 @@ exports.up = function(knex, Promise) {
     })
 
     .createTable("cohorts", tbl => {
-      //PK
       tbl.increments();
-
-      //Cohort Type FK
       tbl
         .integer("cohort_type_id")
         .unsigned()
@@ -75,25 +47,16 @@ exports.up = function(knex, Promise) {
         .notNullable()
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
-
-      //Cohort Name
       tbl
         .string("cohort_name")
         .notNullable()
         .unique();
-
-      //Start Date
       tbl.date("start_date");
-
-      //End Date
       tbl.date("end_date");
     })
 
     .createTable("students", tbl => {
-      //PK
       tbl.increments();
-
-      //Account ID FK
       tbl
         .integer("account_id")
         .unsigned()
@@ -101,55 +64,27 @@ exports.up = function(knex, Promise) {
         .references("accounts.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
-
-      //Cohort ID FK
       tbl
         .integer("cohort_id")
         .unsigned()
-        .notNullable()
         .references("cohorts.id")
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
-
-      //Profile Pic
       tbl.string("profile_pic").unique();
-
-      //Location
       tbl.string("location", 50);
-
-      //Relocatable
       tbl.boolean("relocatable");
-
-      //About
       tbl.text("about", 840);
-
-      //Job Searching
-      tbl.boolean("job_searching");
-
-      //Careers Approved
-      tbl.boolean("careers_approved");
-
-      //Did PM?
-      tbl.boolean("did_pm");
-
-      //Website
+      tbl.boolean("job_searching").defaultTo(false);
+      tbl.boolean("careers_approved").defaultTo(false);
+      tbl.boolean("did_pm").defaultTo(false);
       tbl.string("website").unique();
-
-      //Github
       tbl.string("github").unique();
-
-      //LinkedIn
       tbl.string("linkedin").unique();
-
-      //Twitter
       tbl.string("twitter").unique();
     })
 
     .createTable("hired", tbl => {
-      //PK
       tbl.increments();
-
-      //Student ID FK ----------Maybe make unique to prevent duplicate students?? But what if they get hired twice?
       tbl
         .integer("student_id")
         .unsigned()
@@ -157,8 +92,6 @@ exports.up = function(knex, Promise) {
         .references("students.id")
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
-
-      //Hire Date
       tbl.date("hire_date").notNullable();
     });
 };

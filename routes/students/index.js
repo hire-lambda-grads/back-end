@@ -2,8 +2,31 @@ const router = require("express").Router();
 
 const actions = require("./students");
 const cloudParser = require("../../config/cloudinary");
+const restricted = require("../../middleware/restricted");
 
 module.exports = router;
+
+router
+  .route("/update")
+  .post(restricted, cloudParser.single("image"), async (req, res) => {
+    const info = req.body;
+    const account_id = req.token.subject;
+    if (req.file) {
+      info = {
+        ...info,
+        profile_pic: req.file.url
+      };
+    }
+
+    try {
+      const updated = await actions.updateStudent(account_id, info);
+      res.status(200).json(updated);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Something went wrong update the user information." });
+    }
+  });
 
 router.route("/cards").get(async (req, res) => {
   try {
