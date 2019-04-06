@@ -20,4 +20,8 @@ server.use("/api/auth/register", registerRouter);
 server.use("/api/admin", restricted, adminRouter);
 server.use("/api/students", restricted, studentsRouter);
 
+server.get("/", (req, res) => {
+  req.send("Welcome, please refer to the GitHub Docs to get started.");
+});
+
 module.exports = server;
