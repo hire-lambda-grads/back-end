@@ -44,7 +44,22 @@ function getStudent(account_id) {
 }
 
 function getStudentCards() {
-  return db("accounts");
+  return db("students")
+    .select(
+      "students.profile_pic",
+      "students.location",
+      "students.relocatable",
+      "students.website",
+      "students.github",
+      "students.linkedin",
+      "students.careers_approved",
+      "accounts.first_name",
+      "accounts.last_name",
+      "cohorts.cohort_name"
+    )
+    .innerJoin("accounts", "accounts.id", "students.account_id")
+    .innerJoin("cohorts", "students.cohort_id", "cohorts.id")
+    .where({ "students.job_searching": true });
 }
 
 async function updateStudent(account_id, info) {
@@ -56,6 +71,18 @@ async function updateStudent(account_id, info) {
 
       resolve(
         db("students")
+          .select(
+            "cohort_id",
+            "profile_pic",
+            "location",
+            "relocatable",
+            "about",
+            "job_searching",
+            "website",
+            "github",
+            "linkedin",
+            "twitter"
+          )
           .where({ account_id })
           .first()
       );
