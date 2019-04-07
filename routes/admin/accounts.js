@@ -1,9 +1,16 @@
 const db = require("../../data/config");
 
 module.exports = {
+  deleteAccount,
   getAccounts,
   updateAccount
 };
+
+function deleteAccount(id) {
+  return db("accounts")
+    .where({ id })
+    .del();
+}
 
 function getAccounts() {
   return new Promise(async (resolve, reject) => {
