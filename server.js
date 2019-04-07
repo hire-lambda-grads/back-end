@@ -21,7 +21,7 @@ server.use("/api/auth/login", loginRouter);
 server.use("/api/auth/register", registerRouter);
 server.use("/api/students", studentsRouter);
 server.use("/api/accounts", restricted(), accountsRouter);
-server.use("/api/admin", restricted(), adminRouter);
+server.use("/api/admin", restricted("staff"), adminRouter);
 
 server.get("/", (req, res) => {
   res.send("Welcome, please refer to the GitHub docs to get started.");
