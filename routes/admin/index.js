@@ -5,33 +5,56 @@ const studentsActions = require("./students");
 const cohortsActions = require("./cohorts");
 
 const resources = {
-  accounts: [
-    accountsActions.getAccounts,
-    accountsActions.updateAccount,
-    accountsActions.deleteAccount
-  ],
-  students: [
-    studentsActions.getStudents,
-    studentsActions.updateStudent,
-    studentsActions.deleteStudent
-  ],
-  cohorts: [
-    cohortsActions.getCohorts,
-    cohortsActions.updateCohort,
-    cohortsActions.deleteCohort
-  ]
+  accounts: {
+    get: accountsActions.getAccounts,
+    update: accountsActions.updateAccount,
+    remove: accountsActions.deleteAccount
+  },
+  students: {
+    get: studentsActions.getStudents,
+    update: studentsActions.updateStudent,
+    remove: studentsActions.deleteStudent
+  },
+  cohorts: {
+    create: cohortsActions.addCohort,
+    get: cohortsActions.getCohorts,
+    update: cohortsActions.updateCohort,
+    remove: cohortsActions.deleteCohort
+  }
 };
 
-router.route("/:resource").get(async (req, res) => {
-  try {
-    const resource = await resources[req.params.resource][0]();
-    res.status(200).json(resource);
-  } catch (error) {
-    res.status(500).json({
-      message: `There was an error retrieving the ${req.params.resource}.`
-    });
-  }
-});
+router
+  .route("/:resource")
+  .get(async (req, res) => {
+    try {
+      const resource = await resources[req.params.resource].get();
+      res.status(200).json(resource);
+    } catch (error) {
+      res.status(500).json({
+        message: `There was an error retrieving the ${req.params.resource}.`
+      });
+    }
+  })
+  .post(async (req, res) => {
+    const info = req.body;
+
+    if (info.cohort_type_id && info.cohort_name) {
+      try {
+        const resource = await resources[req.params.resource].create(info);
+        res.status(201).json(resource);
+      } catch (error) {
+        res
+          .status(500)
+          .json({
+            message: `Something went wrong trying to add the ${
+              req.params.resource
+            }.`
+          });
+      }
+    } else {
+      res.status(400).json({ message: "Please provide all required fields." });
+    }
+  });
 
 router
   .route("/:resource/:id")
@@ -40,7 +63,7 @@ router
     const info = req.body;
 
     try {
-      const resource = await resources[req.params.resource][1](id, info);
+      const resource = await resources[req.params.resource].update(id, info);
       res.status(200).json(resource);
     } catch (error) {
       res.status(500).json({
@@ -52,7 +75,7 @@ router
     const { id } = req.params;
 
     try {
-      await resources[req.params.resource][2](id);
+      await resources[req.params.resource].remove(id);
       res.status(200).end();
     } catch (error) {
       res.status(500).json({
