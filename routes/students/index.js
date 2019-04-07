@@ -10,29 +10,29 @@ router
   .route("/update")
   .get(restricted, async (req, res) => {
     const account_id = req.token.subject;
+
     try {
       const student = await actions.getStudent(account_id);
       res.status(200).json(student);
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          message: "Something went wrong retrieving student information."
-        });
+      res.status(500).json({
+        message: "Something went wrong retrieving student information."
+      });
     }
   })
-  .post(restricted, cloudParser.single("image"), async (req, res) => {
+  .put(restricted, cloudParser.single("image"), async (req, res) => {
     const info = req.body;
+    const { careers_approved, did_pm, ...filteredInfo } = info;
     const account_id = req.token.subject;
     if (req.file) {
-      info = {
-        ...info,
+      filteredInfo = {
+        ...filteredInfo,
         profile_pic: req.file.url
       };
     }
 
     try {
-      const updated = await actions.updateStudent(account_id, info);
+      const updated = await actions.updateStudent(account_id, filteredInfo);
       res.status(200).json(updated);
     } catch (error) {
       res
