@@ -48,7 +48,7 @@ router.route("/locations").get(async (req, res) => {
 
 router
   .route("/update")
-  .get(restricted, async (req, res) => {
+  .get(restricted(), async (req, res) => {
     const account_id = req.token.subject;
 
     try {
@@ -60,7 +60,7 @@ router
       });
     }
   })
-  .put(restricted, cloudParser.single("image"), async (req, res) => {
+  .put(restricted(), cloudParser.single("image"), async (req, res) => {
     const info = req.body;
     const { careers_approved, did_pm, ...filteredInfo } = info;
     const account_id = req.token.subject;

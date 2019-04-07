@@ -18,7 +18,7 @@ server.use(middleware);
 server.use("/api/auth/login", loginRouter);
 server.use("/api/auth/register", registerRouter);
 server.use("/api/students", studentsRouter);
-server.use("/api/accounts", restricted, accountsRouter);
+server.use("/api/accounts", restricted(), accountsRouter);
 
 server.get("/", (req, res) => {
   res.send("Welcome, please refer to the GitHub docs to get started.");
