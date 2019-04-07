@@ -19,7 +19,8 @@ const resources = {
     create: cohortsActions.addCohort,
     get: cohortsActions.getCohorts,
     update: cohortsActions.updateCohort,
-    remove: cohortsActions.deleteCohort
+    remove: cohortsActions.deleteCohort,
+    requirements: info => info.cohort_name && info.cohort_type_id
   }
 };
 
@@ -38,18 +39,16 @@ router
   .post(async (req, res) => {
     const info = req.body;
 
-    if (info.cohort_type_id && info.cohort_name) {
+    if (resources[req.params.resource].requirements(info)) {
       try {
         const resource = await resources[req.params.resource].create(info);
         res.status(201).json(resource);
       } catch (error) {
-        res
-          .status(500)
-          .json({
-            message: `Something went wrong trying to add the ${
-              req.params.resource
-            }.`
-          });
+        res.status(500).json({
+          message: `Something went wrong trying to add the ${
+            req.params.resource
+          }.`
+        });
       }
     } else {
       res.status(400).json({ message: "Please provide all required fields." });
