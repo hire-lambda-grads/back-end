@@ -6,6 +6,46 @@ const restricted = require("../../middleware/restricted");
 
 module.exports = router;
 
+router.route("/cards").get(async (req, res) => {
+  try {
+    const students = await actions.getStudentCards();
+    res.status(200).json(students);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Something went wrong retrieving the student cards." });
+  }
+});
+
+router.route("/:id").get(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const student = await actions.getStudentById(id);
+    if (student) {
+      res.status(200).json(student);
+    } else {
+      res
+        .status(404)
+        .json({ message: "No student could be located with that ID." });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Something went wrong retrieving the student." });
+  }
+});
+
+router.route("/locations").get(async (req, res) => {
+  try {
+    const locations = await actions.getStudentLocations();
+    res.status(200).json(locations);
+  } catch (error) {
+    res.status(500).json({
+      message: "Soemthing went wrong retrieving the student locations."
+    });
+  }
+});
+
 router
   .route("/update")
   .get(restricted, async (req, res) => {
@@ -40,30 +80,6 @@ router
         .json({ message: "Something went wrong update the user information." });
     }
   });
-
-router.route("/cards").get(async (req, res) => {
-  try {
-    const students = await actions.getStudentCards();
-    res.status(200).json(students);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Something went wrong retrieving the student cards." });
-  }
-});
-
-router.route("/locations").get(async (req, res) => {
-  try {
-    const locations = await actions.getStudentLocations();
-    res.status(200).json(locations);
-  } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Soemthing went wrong retrieving the student locations."
-      });
-  }
-});
 
 //Cloudinary example
 // server.post('/api/images', cloudParser.single("image"), (req, res) => {

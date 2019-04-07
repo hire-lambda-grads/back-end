@@ -2,6 +2,7 @@ const db = require("../../data/config");
 
 module.exports = {
   getStudent,
+  getStudentById,
   getStudentCards,
   getStudentLocations,
   updateStudent
@@ -44,9 +45,34 @@ function getStudent(account_id) {
   });
 }
 
+function getStudentById(id) {
+  return db("students")
+    .select(
+      "students.profile_pic",
+      "students.location",
+      "students.relocatable",
+      "students.about",
+      "students.job_searching",
+      "students.careers_approved",
+      "students.did_pm",
+      "students.website",
+      "students.github",
+      "students.linkedin",
+      "students.twitter",
+      "accounts.first_name",
+      "accounts.last_name",
+      "cohorts.cohort_name"
+    )
+    .innerJoin("accounts", "accounts.id", "students.account_id")
+    .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
+    .where({ "students.id": id })
+    .first();
+}
+
 function getStudentCards() {
   return db("students")
     .select(
+      "students.id",
       "students.profile_pic",
       "students.location",
       "students.relocatable",
