@@ -8,7 +8,7 @@ module.exports = {
 function generateToken(user) {
   const payload = {
     subject: user.id,
-    role_id: user.role_id
+    role: user.role
   };
 
   const secret = process.env.JWT_SECRET;

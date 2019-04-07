@@ -6,6 +6,7 @@ router
   .route("/update")
   .get(async (req, res) => {
     const account_id = req.token.subject;
+
     try {
       const account = await actions.getAccount(account_id);
       res.status(200).json(account);

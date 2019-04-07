@@ -17,7 +17,7 @@ router.route("/cards").get(async (req, res) => {
   }
 });
 
-router.route("/update/:id").get(async (req, res) => {
+router.route("/profile/:id").get(async (req, res) => {
   const { id } = req.params;
   try {
     const student = await actions.getStudentById(id);

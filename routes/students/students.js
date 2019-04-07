@@ -79,6 +79,7 @@ function getStudentCards() {
       "students.website",
       "students.github",
       "students.linkedin",
+      "students.twitter",
       "students.careers_approved",
       "accounts.first_name",
       "accounts.last_name",
