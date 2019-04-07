@@ -1,7 +1,8 @@
 const db = require("../../data/config");
 
 module.exports = {
-  getAccounts
+  getAccounts,
+  updateAccount
 };
 
 function getAccounts() {
@@ -25,6 +26,35 @@ function getAccounts() {
           role_options
         }));
         resolve(mergedFields);
+      } else {
+        reject();
+      }
+    } catch (error) {
+      reject();
+    }
+  });
+}
+
+function updateAccount(id, info) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const count = await db("accounts")
+        .where({ id })
+        .update(info);
+      if (count) {
+        resolve(
+          db("accounts")
+            .select(
+              "id",
+              "email",
+              "first_name",
+              "last_name",
+              "verified_student",
+              "role_id"
+            )
+            .where({ id })
+            .first()
+        );
       } else {
         reject();
       }

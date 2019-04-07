@@ -13,4 +13,18 @@ router.route("/accounts").get(async (req, res) => {
   }
 });
 
+router.route("/accounts/:id").put(async (req, res) => {
+  const { id } = req.params;
+  const info = req.body;
+
+  try {
+    const updated = await accountsActions.updateAccount(id, info);
+    res.status(200).json(updated);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "There was an error updating the account." });
+  }
+});
+
 module.exports = router;
