@@ -3,6 +3,7 @@ const db = require("../../data/config");
 module.exports = {
   getStudent,
   getStudentCards,
+  getStudentLocations,
   updateStudent
 };
 
@@ -62,7 +63,13 @@ function getStudentCards() {
     .where({ "students.job_searching": true });
 }
 
-async function updateStudent(account_id, info) {
+function getStudentLocations() {
+  return db("students")
+    .select("location", "job_searching")
+    .whereNotNull("location");
+}
+
+function updateStudent(account_id, info) {
   return new Promise(async (resolve, reject) => {
     try {
       await db("students")

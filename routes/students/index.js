@@ -52,6 +52,19 @@ router.route("/cards").get(async (req, res) => {
   }
 });
 
+router.route("/locations").get(async (req, res) => {
+  try {
+    const locations = await actions.getStudentLocations();
+    res.status(200).json(locations);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Soemthing went wrong retrieving the student locations."
+      });
+  }
+});
+
 //Cloudinary example
 // server.post('/api/images', cloudParser.single("image"), (req, res) => {
 //     console.log(req.file) // to see what is returned to you
