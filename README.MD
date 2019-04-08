@@ -1,19 +1,36 @@
 # Hire A Lambda Grad
 
-## NAVIGATION
-
+##Navigation
+----
+###All Accounts
 [Register User](#register)<br>
 [Login](#login)<br>
 [Get All Students](#get-students)<br>
+[Get Students - Card Form](#get-students-cards)<br>
 [Get Student Locations](#get-student-locations)<br>
 [Get Single Student](#get-single-student)<br>
-[Update Student Information](#edit-student)<br>
 [Delete An Account](#delete-account)<br>
 
-# Base URL
+###Student Accounts
+[Update Student Information](#edit-student)<br>
 
+###Admin Accounts
+[Get All Students](#admin-get-students)<br>
+[Update Single Student](#admin-update-student)<br>
+[Delete Single Student](#admin-delete-student)<br><br>
+[Get All Cohorts](#admin-get-cohorts)<br>
+[Add A Cohort](#admin-add-cohort)<br>
+[Update A Cohort](#admin-update-cohort)<br>
+[Delete A Cohort](#admin-delete-cohort)<br><br>
+[Get All Accounts](#admin-get-accounts)<br>
+[Update An Account](#admin-update-account)<br>
+[Remove An Account](#admin-remove-account)<br>
+-----
+
+## Base URL
  **https://halg-backend.herokuapp.com/**
 
+-----
 ## REGISTER <a name="register"></a>
 
 ### Register an Account
