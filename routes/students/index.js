@@ -62,6 +62,7 @@ router
   })
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
     const info = req.body;
+    console.log(info);
     let { careers_approved, did_pm, ...filteredInfo } = info;
     const account_id = req.token.subject;
     if (req.file) {
@@ -70,7 +71,7 @@ router
         profile_pic: req.file.url
       };
     }
-
+    console.log(filteredInfo);
     try {
       const updated = await actions.updateStudent(account_id, filteredInfo);
       res.status(200).json(updated);
