@@ -99,6 +99,7 @@ function getStudentLocations() {
 function updateStudent(account_id, info) {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log("ACCOUNT_ID IN PROMISE", account_id);
       await db("students")
         .where({ account_id })
         .update(info);
