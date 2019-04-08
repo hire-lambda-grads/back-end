@@ -70,22 +70,9 @@ router
       });
     }
   })
-  .put(restricted(), cloudParser.single("image"), async (req, res) => {
-    let info;
-    try {
-      info = JSON.parse(req.body.studentInfo);
-    } catch (err) {
-      info = req.body;
-    }
-    let { account_id, image, careers_approved, did_pm, ...filteredInfo } = info;
+  .put(restricted(), async (req, res) => {
+    let { account_id, careers_approved, did_pm, ...filteredInfo } = req.body;
     account_id = req.token.subject;
-
-    if (req.file) {
-      filteredInfo = {
-        ...filteredInfo,
-        profile_pic: req.file.url
-      };
-    }
 
     try {
       const updated = await actions.updateStudent(account_id, filteredInfo);
@@ -98,24 +85,22 @@ router
   });
 
 router
-  .route("/brandons-test")
+  .route("/update/profile_picture")
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
-    console.log("REQ.BODY", req.body);
+    const account_id = req.token.subject;
     try {
-      let { image, ...info } = req.body;
-      JSON.parse(JSON.stringify(info));
-      console.log(info);
-
-      if (req.file) {
-        console.log("REQ.FILE IS PRESENT");
-        info = {
-          ...info,
+      if (req.file && req.file.url) {
+        const updated = await actions.updateStudent(account_id, {
           profile_pic: req.file.url
-        };
-        console.log("REQ.FILE MERGED", info);
+        });
+        res.status(200).json(updated);
+      } else {
+        res.status(400).json({ message: "Please provide an image to upload." });
       }
     } catch (error) {
-      console.error("CATCH ERROR", error);
+      res
+        .status(500)
+        .json({ message: "Something went wrong uploading the picture." });
     }
   });
 
