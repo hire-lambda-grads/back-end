@@ -1,8 +1,11 @@
 # Hire A Lambda Grad
 
 ##Navigation
+
 ----
+
 ###All Accounts
+
 [Register User](#register)<br>
 [Login](#login)<br>
 [Get All Students](#get-students)<br>
@@ -25,6 +28,7 @@
 [Get All Accounts](#admin-get-accounts)<br>
 [Update An Account](#admin-update-account)<br>
 [Remove An Account](#admin-remove-account)<br>
+
 -----
 
 ## Base URL
