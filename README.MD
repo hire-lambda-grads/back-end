@@ -1,10 +1,10 @@
 # Hire A Lambda Grad
 
-##Navigation
+## Navigation
 
 ----
 
-###All Accounts
+### All Accounts
 
 [Register User](#register)<br>
 [Login](#login)<br>
@@ -14,10 +14,12 @@
 [Get Single Student](#get-single-student)<br>
 [Delete An Account](#delete-account)<br>
 
-###Student Accounts
+### Student Accounts
+
 [Update Student Information](#edit-student)<br>
 
-###Admin Accounts
+### Admin Accounts
+
 [Get All Students](#admin-get-students)<br>
 [Update Single Student](#admin-update-student)<br>
 [Delete Single Student](#admin-delete-student)<br><br>
