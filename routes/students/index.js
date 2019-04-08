@@ -62,6 +62,7 @@ router
   })
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
     const info = req.body;
+    console.log("INITIAL INFO", info);
     let { account_id, image, careers_approved, did_pm, ...filteredInfo } = info;
     account_id = req.token.subject;
     console.log("ACCOUNT_ID", account_id);
