@@ -65,6 +65,7 @@ router
     console.log(info);
     let { careers_approved, did_pm, ...filteredInfo } = info;
     const account_id = req.token.subject;
+    console.log(req.file);
     if (req.file) {
       filteredInfo = {
         ...filteredInfo,
