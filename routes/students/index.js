@@ -87,6 +87,26 @@ router
     }
   });
 
+router
+  .route("/brandons-test")
+  .put(restricted(), cloudParser.single("image"), async (req, res) => {
+    console.log("REQ.BODY", req.body);
+    try {
+      let info = req.body;
+
+      if (req.file) {
+        console.log("REQ.FILE IS PRESENT");
+        info = {
+          ...info,
+          profile_pic: req.file.url
+        };
+        console.log("REQ.FILE MERGED", info);
+      }
+    } catch (error) {
+      console.error("CATCH ERROR", error);
+    }
+  });
+
 //Cloudinary example
 // server.post('/api/images', cloudParser.single("image"), (req, res) => {
 //     console.log(req.file) // to see what is returned to you

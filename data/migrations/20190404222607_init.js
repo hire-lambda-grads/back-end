@@ -14,6 +14,7 @@ exports.up = function(knex, Promise) {
         .integer("role_id")
         .unsigned()
         .references("roles.id")
+        .defaultTo(1)
         .notNullable()
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
@@ -71,7 +72,7 @@ exports.up = function(knex, Promise) {
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
       tbl.string("profile_pic").unique();
-      tbl.string("location", 50);
+      tbl.integer("location");
       tbl.boolean("relocatable");
       tbl.text("about", 840);
       tbl.boolean("job_searching").defaultTo(false);
