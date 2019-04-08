@@ -43,6 +43,7 @@ function updateStudent(id, info) {
       const count = await db("students")
         .where({ id })
         .update(info);
+
       if (count) {
         resolve(
           db("students")

@@ -61,7 +61,12 @@ router
     }
   })
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
-    const info = JSON.parse(req.body.studentInfo);
+    let info;
+    try {
+      info = JSON.parse(req.body.studentInfo);
+    } catch (err) {
+      info = req.body;
+    }
     let { account_id, image, careers_approved, did_pm, ...filteredInfo } = info;
     account_id = req.token.subject;
 

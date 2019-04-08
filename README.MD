@@ -2,14 +2,11 @@
 
 ## Navigation
 
-----
-
 ### All Accounts
 
 [Register User](#register)<br>
 [Login](#login)<br>
-[Get All Students](#get-students)<br>
-[Get Students - Card Form](#get-students-cards)<br>
+[Get All Students - Card Form](#get-students)<br>
 [Get Student Locations](#get-student-locations)<br>
 [Get Single Student](#get-single-student)<br>
 [Delete An Account](#delete-account)<br>
@@ -31,12 +28,14 @@
 [Update An Account](#admin-update-account)<br>
 [Remove An Account](#admin-remove-account)<br>
 
------
+---
 
 ## Base URL
- **https://halg-backend.herokuapp.com/**
 
------
+**https://halg-backend.herokuapp.com/**
+
+---
+
 ## REGISTER <a name="register"></a>
 
 ### Register an Account
@@ -116,12 +115,6 @@ _Method Url: /api/auth/login_
 
 _HTTP method: [POST]_
 
-### Headers
-
-| name         | type   | required | description              |
-| ------------ | ------ | -------- | ------------------------ |
-| Content-Type | String | Yes      | Must be application/json |
-
 ### Body
 
 | name     | type   | required | description                               |
@@ -133,8 +126,8 @@ _example:_
 
 ```
 {
-  email: "johndoe@email.com",
-  password: "password123"
+  "email": "johndoe@email.com",
+  "password": "password123"
 }
 ```
 
@@ -146,7 +139,7 @@ _example:_
 
 ```
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTQ0MzM1NjUxLCJleHAiOjE1NzU4OTMyNTF9.uqd2OHBYkGQpwjLTPPiPWYkYOKlG7whQDFkk46xGXoE",
+  "token": "hashed_token_here",
   "message": "Welcome!"
 }
 ```
@@ -179,14 +172,177 @@ _example:_
 
 ### Retrieves an array of all of the students, in card format.
 
-_Method URL: /students_
+_Method URL: /students/cards_
 
 _HTTP method: [GET]_
 
-### Headers
+### Response
 
-| name          | type   | required | description |
-| ------------- | ------ | -------- | ----------- |
-| Authorization | String | Yes      | token       |
+**200 (OK)**
+
+> Will return an array of students with information relevant to card displays.
+
+```
+[
+  {
+    "id": 2,
+    "profile_pic": "http://res.cloudinary.com/hirelambdastudents/image/upload/v1554688170/pictures/z9uohrxrlcjvhw2jwqqm.jpg",
+    "location": 77433,
+    "relocatable": 1,
+    "website": "testing",
+    "github": "test",
+    "linkedin": "test2",
+    "twitter": "test1",
+    "careers_approved": 0,
+    "first_name": "billy",
+    "last_name": "bill",
+    "cohort_name": "Web16"
+  }
+]
+```
+
+## GET STUDENT LOCATIONS <a name="get-students"></a>
+
+### Retrieves an array of all of the student locations, and job searching status.
+
+_Method URL: /students/locations_
+
+_HTTP method: [GET]_
 
 ### Response
+
+**200 (OK)**
+
+> Will return an array of students with information relevant to location mapping.
+
+```
+[
+  {
+      "location": 77433,
+      "job_searching": 1
+  }
+]
+```
+
+## GET STUDENT LOCATIONS <a name="get-student-locations"></a>
+
+### Retrieves an array of all of the student locations, and job searching status.
+
+_Method URL: /students/locations_
+
+_HTTP method: [GET]_
+
+### Response
+
+**200 (OK)**
+
+> Will return an array of students with information relevant to location mapping.
+
+```
+[
+  {
+      "location": 77433,
+      "job_searching": 1
+  }
+]
+```
+
+## GET SINGLE STUDENT <a name="get-single-student"></a>
+
+### Retrieves an object with information relevant to a student profile page.
+
+_Method URL: /students/profile/:id_
+
+_HTTP method: [GET]_
+
+### Response
+
+**200 (OK)**
+
+> Will return an object for the student matching the ID provided.
+
+```
+[
+  {
+    "profile_pic": "http://res.cloudinary.com/hirelambdastudents/image/upload/v1554688170/pictures/z9uohrxrlcjvhw2jwqqm.jpg",
+    "location": "houston, tx",
+    "relocatable": 1,
+    "about": "super awesome developer",
+    "job_searching": 1,
+    "careers_approved": 0,
+    "did_pm": 1,
+    "website": "testing",
+    "github": "test",
+    "linkedin": "test2",
+    "twitter": "test1",
+    "first_name": "brandon",
+    "last_name": "gardner",
+    "cohort_name": "Web16"
+  }
+]
+```
+
+**404 (NOT FOUND)**
+
+> If you put in an invalid ID, the server will respond with the following.
+
+```
+{
+    "message": "No student could be located with that ID."
+}
+```
+
+## UPDATE STUDENT INFO <a name="edit-student"></a>
+
+### Update's current student's information with new values. Did PM and Careers Approved not available.
+
+_Method URL: /students/update_
+
+_HTTP method: [PUT]_
+
+### Headers
+
+| name          | type   | required | description                |
+| ------------- | ------ | -------- | -------------------------- |
+| authorization | String | Yes      | Token to reference account |
+
+### Response
+
+**200 (OK)**
+
+> Will return a status code 200 and an object with updated student.
+
+```
+{
+  "cohort_id": 1,
+  "profile_pic": "http://res.cloudinary.com/hirelambdastudents/image/upload/v1554688170/pictures/z9uohrxrlcjvhw2jwqqm.jpg",
+  "location": "77433",
+  "relocatable": 1,
+  "about": "super awesome developer",
+  "job_searching": 1,
+  "website": "testing",
+  "github": "test",
+  "linkedin": "test2",
+  "twitter": "test1"
+}
+```
+
+## DELETE ACCOUNT <a name="delete-account"></a>
+
+### Removes account from records. NOT REVERSIBLE.
+
+_Method URL: /students/update_
+
+_HTTP method: [DELETE]_
+
+### Headers
+
+| name          | type   | required | description                |
+| ------------- | ------ | -------- | -------------------------- |
+| authorization | String | Yes      | Token to reference account |
+
+### Response
+
+**200 (OK)**
+
+> Will return a status code 200 if account was successfully deleted.
