@@ -93,7 +93,7 @@ router
     console.log("REQ.BODY", req.body);
     try {
       let { image, ...info } = req.body;
-      JSON.parse(info);
+      JSON.parse(JSON.stringify(info));
       console.log(info2);
 
       if (req.file) {
