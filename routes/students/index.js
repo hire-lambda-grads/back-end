@@ -62,17 +62,16 @@ router
   })
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
     const info = JSON.parse(req.body.studentInfo);
-    console.log("INITIAL INFO", info);
     let { account_id, image, careers_approved, did_pm, ...filteredInfo } = info;
     account_id = req.token.subject;
-    console.log("DESTRUCTURED INFO", filteredInfo);
+
     if (req.file) {
       filteredInfo = {
         ...filteredInfo,
         profile_pic: req.file.url
       };
     }
-    console.log("FILTERED INFO AFTER MERGE", filteredInfo);
+
     try {
       const updated = await actions.updateStudent(account_id, filteredInfo);
       res.status(200).json(updated);

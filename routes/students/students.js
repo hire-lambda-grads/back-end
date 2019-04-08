@@ -103,7 +103,7 @@ function updateStudent(account_id, info) {
       await db("students")
         .where({ account_id })
         .update(info);
-      console.log("we made it past the update");
+
       resolve(
         db("students")
           .select(
@@ -122,7 +122,6 @@ function updateStudent(account_id, info) {
           .first()
       );
     } catch (error) {
-      console.log("o fuck we failed");
       reject();
     }
   });
