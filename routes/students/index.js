@@ -68,7 +68,7 @@ router
     console.log(req.file);
     if (req.file) {
       filteredInfo = {
-        ...filteredInfo,
+        ...JSON.parse(filteredInfo),
         profile_pic: req.file.url
       };
     }
