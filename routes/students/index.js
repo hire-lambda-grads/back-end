@@ -61,7 +61,7 @@ router
     }
   })
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
-    const { info } = req.body;
+    const info = req.body.studentInfo;
     console.log("INITIAL INFO FROM REQ.BODY", info);
     let { careers_approved, did_pm, ...filteredInfo } = info;
     const account_id = req.token.subject;
