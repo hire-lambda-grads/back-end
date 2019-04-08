@@ -94,7 +94,7 @@ router
     try {
       let { image, ...info } = req.body;
       JSON.parse(JSON.stringify(info));
-      console.log(info2);
+      console.log(info);
 
       if (req.file) {
         console.log("REQ.FILE IS PRESENT");
