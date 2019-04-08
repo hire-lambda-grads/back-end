@@ -92,7 +92,8 @@ router
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
     console.log("REQ.BODY", req.body);
     try {
-      let info = req.body;
+      let info = JSON.parse(req.body);
+      console.log(info2);
 
       if (req.file) {
         console.log("REQ.FILE IS PRESENT");
