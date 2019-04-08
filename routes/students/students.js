@@ -5,6 +5,7 @@ module.exports = {
   getStudentById,
   getStudentCards,
   getStudentLocations,
+  getStudentProfile,
   updateStudent
 };
 
@@ -88,6 +89,32 @@ function getStudentCards() {
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "students.cohort_id", "cohorts.id")
     .where({ "students.job_searching": true });
+}
+
+function getStudentProfile(account_id) {
+  return db("students")
+    .select(
+      "students.profile_pic",
+      "students.location",
+      "students.relocatable",
+      "students.about",
+      "students.job_searching",
+      "students.careers_approved",
+      "students.did_pm",
+      "students.website",
+      "students.github",
+      "students.linkedin",
+      "students.twitter",
+      "accounts.first_name",
+      "accounts.last_name",
+      "cohorts.cohort_name",
+      "cohort_types.type"
+    )
+    .innerJoin("accounts", "accounts.id", "students.account_id")
+    .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
+    .innerJoin("cohort_types", "cohorts_type.id", "cohort_types.id")
+    .where({ "students.account_id": account_id })
+    .first();
 }
 
 function getStudentLocations() {
