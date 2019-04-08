@@ -62,24 +62,24 @@ router
   })
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
     const info = req.body;
-    console.log(info);
+    console.log("INITIAL INFO FROM REQ.BODY", info);
     let { careers_approved, did_pm, ...filteredInfo } = info;
     const account_id = req.token.subject;
-    console.log(req.file);
+    console.log("REQ.FILE", req.file);
     if (req.file) {
       filteredInfo = {
-        ...JSON.parse(filteredInfo),
+        filteredInfo,
         profile_pic: req.file.url
       };
     }
-    console.log(filteredInfo);
+    console.log("FILTERED INFO AFTER MERGE", filteredInfo);
     try {
       const updated = await actions.updateStudent(account_id, filteredInfo);
       res.status(200).json(updated);
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Something went wrong update the user information." });
+      res.status(500).json({
+        message: "Something went wrong updating the user information."
+      });
     }
   });
 
