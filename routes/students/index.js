@@ -17,10 +17,11 @@ router.route("/cards").get(async (req, res) => {
   }
 });
 
-router.route("/profile").get(async (req, res) => {
+router.route("/profile").get(restricted(), async (req, res) => {
   const account_id = req.token.subject;
   try {
     const profile = await actions.getStudentProfile(account_id);
+    res.status(200).json(profile);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving the user profile." });
   }

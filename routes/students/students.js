@@ -108,11 +108,11 @@ function getStudentProfile(account_id) {
       "accounts.first_name",
       "accounts.last_name",
       "cohorts.cohort_name",
-      "cohort_types.type"
+      "cohort_types.type as track"
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
-    .innerJoin("cohort_types", "cohorts_type.id", "cohort_types.id")
+    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
     .where({ "students.account_id": account_id })
     .first();
 }
