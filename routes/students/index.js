@@ -92,7 +92,8 @@ router
   .put(restricted(), cloudParser.single("image"), async (req, res) => {
     console.log("REQ.BODY", req.body);
     try {
-      let info = JSON.parse(req.body);
+      let { image, ...info } = req.body;
+      JSON.parse(info);
       console.log(info2);
 
       if (req.file) {
