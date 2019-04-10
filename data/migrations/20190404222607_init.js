@@ -56,6 +56,18 @@ exports.up = function(knex, Promise) {
       tbl.date("end_date");
     })
 
+    .createTable("skills", tbl => {
+      tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .notNullable()
+        .references("students.id")
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl.string("skill");
+    })
+
     .createTable("students", tbl => {
       tbl.increments();
       tbl
@@ -72,7 +84,7 @@ exports.up = function(knex, Promise) {
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
       tbl.string("profile_pic").unique();
-      tbl.integer("location");
+      tbl.string("location");
       tbl.boolean("relocatable");
       tbl.text("about", 840);
       tbl.boolean("job_searching").defaultTo(false);

@@ -73,6 +73,7 @@ router
   .put(restricted(), async (req, res) => {
     let { account_id, careers_approved, did_pm, ...filteredInfo } = req.body;
     account_id = req.token.subject;
+    console.log(account_id);
 
     try {
       const updated = await actions.updateStudent(account_id, filteredInfo);

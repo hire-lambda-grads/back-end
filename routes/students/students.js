@@ -62,10 +62,12 @@ function getStudentById(id) {
       "students.twitter",
       "accounts.first_name",
       "accounts.last_name",
-      "cohorts.cohort_name"
+      "cohorts.cohort_name",
+      "cohort_types.type as track"
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
+    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
     .where({ "students.id": id })
     .first();
 }
@@ -84,10 +86,12 @@ function getStudentCards() {
       "students.careers_approved",
       "accounts.first_name",
       "accounts.last_name",
-      "cohorts.cohort_name"
+      "cohorts.cohort_name",
+      "cohort_types.type as track"
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "students.cohort_id", "cohorts.id")
+    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
     .where({ "students.job_searching": true });
 }
 
@@ -130,6 +134,7 @@ function updateStudent(account_id, info) {
         .where({ account_id })
         .update(info);
 
+      console.log(account_id, "ACCT ID IN PROMISE");
       resolve(
         db("students")
           .select(
