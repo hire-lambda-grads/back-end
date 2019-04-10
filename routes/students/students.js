@@ -131,6 +131,7 @@ function updateStudent(account_id, info) {
   return new Promise(async (resolve, reject) => {
     try {
       console.log(account_id, "IN PROMISE BEFORE UPDATE");
+      console.log(info, "INFO IN PROMISE");
       await db("students")
         .where({ account_id })
         .update(info);
