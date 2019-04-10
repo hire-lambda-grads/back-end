@@ -130,11 +130,13 @@ function getStudentLocations() {
 function updateStudent(account_id, info) {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log(account_id, "IN PROMISE BEFORE UPDATE");
       await db("students")
         .where({ account_id })
         .update(info);
 
-      console.log(account_id, "ACCT ID IN PROMISE");
+      console.log("UPDATE WENT THROUGH");
+
       resolve(
         db("students")
           .select(
