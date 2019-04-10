@@ -117,8 +117,7 @@ function getStudentProfile(account_id) {
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
     .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
-    .where({ "students.account_id": account_id })
-    .first();
+    .where({ "students.account_id": account_id });
 }
 
 function getStudentLocations() {
@@ -156,6 +155,7 @@ function updateStudent(account_id, info) {
           .first()
       );
     } catch (error) {
+      console.log("HERES THE ERROR", error);
       reject();
     }
   });
