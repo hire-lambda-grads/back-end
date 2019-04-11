@@ -117,7 +117,8 @@ function getStudentProfile(account_id) {
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
     .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
-    .where({ "students.account_id": account_id });
+    .where({ "students.account_id": account_id })
+    .first();
 }
 
 function getStudentLocations() {
@@ -129,13 +130,9 @@ function getStudentLocations() {
 function updateStudent(account_id, info) {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log(account_id, "IN PROMISE BEFORE UPDATE");
-      console.log(info, "INFO IN PROMISE");
       await db("students")
         .where({ account_id })
         .update(info);
-
-      console.log("UPDATE WENT THROUGH");
 
       resolve(
         db("students")
@@ -155,7 +152,6 @@ function updateStudent(account_id, info) {
           .first()
       );
     } catch (error) {
-      console.log("HERES THE ERROR", error);
       reject();
     }
   });
