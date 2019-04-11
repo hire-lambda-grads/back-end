@@ -141,6 +141,9 @@ exports.up = function(knex, Promise) {
 exports.down = function(knex, Promise) {
   return knex.schema
     .dropTableIfExists("accounts")
+    .dropTableIfExists("skills")
+    .dropTableIfExists("student_skills")
+    .dropTableIfExists("skill_types")
     .dropTableIfExists("hired")
     .dropTableIfExists("students")
     .dropTableIfExists("roles")

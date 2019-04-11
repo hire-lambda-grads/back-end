@@ -13,7 +13,7 @@ router.route("/").post(async (req, res) => {
     user.role_id
   ) {
     try {
-      const count = await actions.addUser(user, user.role_id);
+      const count = await actions.addUser(user);
       if (count) {
         res.status(201).json({ message: "User successfully added." });
       } else {
