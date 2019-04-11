@@ -58,14 +58,43 @@ exports.up = function(knex, Promise) {
 
     .createTable("skills", tbl => {
       tbl.increments();
+      tbl.string("skill");
+    })
+
+    .createTable("student_skills", tbl => {
+      tbl.increments();
       tbl
         .integer("student_id")
         .unsigned()
-        .notNullable()
         .references("students.id")
+        .notNullable()
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
-      tbl.string("skill");
+      tbl
+        .integer("skill_id")
+        .unsigned()
+        .references("skills.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+    })
+
+    .createTable("skill_types", tbl => {
+      tbl.increments();
+      tbl
+        .integer("skills_id")
+        .unsigned()
+        .references("skills.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("cohort_type_id")
+        .unsigned()
+        .references("cohort_types.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
     })
 
     .createTable("students", tbl => {
