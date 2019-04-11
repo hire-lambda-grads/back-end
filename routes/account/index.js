@@ -23,6 +23,7 @@ router
 
     try {
       const updated = await actions.updateAccount(account_id, filteredInfo);
+      console.log(updated);
       res.status(200).json(updated);
     } catch (error) {
       res

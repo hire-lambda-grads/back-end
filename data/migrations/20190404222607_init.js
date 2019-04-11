@@ -90,10 +90,10 @@ exports.up = function(knex, Promise) {
       tbl.boolean("job_searching").defaultTo(false);
       tbl.boolean("careers_approved").defaultTo(false);
       tbl.boolean("did_pm").defaultTo(false);
-      tbl.string("website").unique();
-      tbl.string("github").unique();
-      tbl.string("linkedin").unique();
-      tbl.string("twitter").unique();
+      tbl.string("website");
+      tbl.string("github");
+      tbl.string("linkedin");
+      tbl.string("twitter");
     })
 
     .createTable("hired", tbl => {

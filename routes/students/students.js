@@ -91,8 +91,8 @@ function getStudentCards() {
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "students.cohort_id", "cohorts.id")
-    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
-    .where({ "students.job_searching": true });
+    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id");
+  // .where({ "students.job_searching": true });
 }
 
 function getStudentProfile(account_id) {
