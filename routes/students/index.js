@@ -71,15 +71,26 @@ router
     }
   })
   .put(restricted(), async (req, res) => {
-    let { account_id, careers_approved, did_pm, ...filteredInfo } = req.body;
+    let {
+      account_id,
+      careers_approved,
+      did_pm,
+      skills,
+      ...filteredInfo
+    } = req.body;
     account_id = req.token.subject;
 
     try {
-      const updated = await actions.updateStudent(account_id, filteredInfo);
+      const updated = await actions.updateStudent(
+        account_id,
+        filteredInfo,
+        skills
+      );
       res.status(200).json(updated);
     } catch (error) {
       res.status(500).json({
-        message: "Something went wrong updating the user information."
+        message: "Something went wrong updating the user information.",
+        error
       });
     }
   });

@@ -15,6 +15,7 @@ function getStudent(account_id) {
       let student = await db("students")
         .where({ account_id })
         .select(
+          "id",
           "cohort_id",
           "profile_pic",
           "location",
@@ -32,16 +33,27 @@ function getStudent(account_id) {
           "id as cohort_id",
           "cohort_name"
         );
+        let skills = await db("student_skills")
+          .select("skills.skill")
+          .innerJoin("skills", "skills.id", "student_skills.skill_id")
+          .where({ "student_skills.student_id": student.id });
+        skills = skills.map(skill => skill.skill);
+        const skill_options = await db("skills").select(
+          "id as skill_id",
+          "skill"
+        );
         student = {
           ...student,
+          skills,
+          skill_options, //List of student's current skills
           cohort_options //So update form can have all cohort_id's to tie to a student
         };
         resolve(student);
       } else {
-        reject();
+        reject(Error("Could not locate student."));
       }
     } catch (error) {
-      reject();
+      reject(Error("Something went wrong fetching all student information."));
     }
   });
 }
@@ -112,11 +124,14 @@ function getStudentProfile(account_id) {
       "accounts.first_name",
       "accounts.last_name",
       "cohorts.cohort_name",
-      "cohort_types.type as track"
+      "cohort_types.type as track",
+      "skills.skill"
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
     .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
     .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
+    .innerJoin("student_skills", "student_skills.student_id", "students.id")
+    .innerJoin("skills", "skills.skill", "student_skills.skill_id")
     .where({ "students.account_id": account_id })
     .first();
 }
@@ -127,32 +142,47 @@ function getStudentLocations() {
     .whereNotNull("location");
 }
 
-function updateStudent(account_id, info) {
+function updateStudent(account_id, info, skills) {
   return new Promise(async (resolve, reject) => {
+    let student, newSkills;
     try {
       await db("students")
         .where({ account_id })
         .update(info);
-
-      resolve(
-        db("students")
-          .select(
-            "cohort_id",
-            "profile_pic",
-            "location",
-            "relocatable",
-            "about",
-            "job_searching",
-            "website",
-            "github",
-            "linkedin",
-            "twitter"
-          )
-          .where({ account_id })
-          .first()
-      );
+      await db("student_skills")
+        .where({ student_id: info.id })
+        .del();
+      if (skills.length > 0) {
+        //Need to restructure skills with student ID for student_skills table. Handling here so FE doesn't have to.
+        skills = skills.map(id => ({ skill_id: id, student_id: info.id }));
+        await db("student_skills").insert(skills);
+      }
+      student = await db("students")
+        .select(
+          "cohort_id",
+          "profile_pic",
+          "location",
+          "relocatable",
+          "about",
+          "job_searching",
+          "website",
+          "github",
+          "linkedin",
+          "twitter"
+        )
+        .where({ account_id })
+        .first();
+      newSkills = await db("student_skills")
+        .select("skills.skill")
+        .innerJoin("skills", "skills.id", "student_skills.skill_id")
+        .where({ "student_skills.student_id": info.id });
+      newSkills = newSkills.map(skill => skill.skill);
     } catch (error) {
-      reject();
+      reject(error);
     }
+    resolve({
+      ...student,
+      skills: newSkills
+    });
   });
 }

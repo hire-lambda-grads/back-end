@@ -5,7 +5,6 @@ const password = bcrypt.hashSync(process.env.INITIAL_ADMIN_PASSWORD, 8);
 exports.seed = function(knex, Promise) {
   return knex("accounts").insert([
     {
-      id: 1,
       role_id: 3,
       email,
       password,

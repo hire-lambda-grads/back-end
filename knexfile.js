@@ -2,21 +2,43 @@ require("dotenv").config();
 
 module.exports = {
   development: {
-    client: "sqlite3",
+    client: "pg",
     connection: {
-      filename: "./data/hlg_db.db3"
+      database: "HireLambdaStudents",
+      user: "brandon",
+      password: "apollo"
+    },
+    pool: {
+      min: 2,
+      max: 10
     },
     useNullAsDefault: true,
     migrations: {
       directory: "./data/migrations"
     },
     seeds: {
+      tableName: "knex_migrations",
       directory: "./data/seeds"
+    }
+  },
+  testing: {
+    client: "pg",
+    connection: {
+      database: "HireLambdaStudents",
+      user: "brandon",
+      password: "apollo"
     },
     pool: {
-      afterCreate: (conn, done) => {
-        conn.run("PRAGMA foreign_keys = ON", done);
-      }
+      min: 2,
+      max: 10
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: "./data/migrations"
+    },
+    seeds: {
+      tableName: "knex_migrations",
+      directory: "./data/seeds"
     }
   },
   production: {

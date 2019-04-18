@@ -58,31 +58,13 @@ exports.up = function(knex, Promise) {
 
     .createTable("skills", tbl => {
       tbl.increments();
-      tbl.string("skill");
-    })
-
-    .createTable("student_skills", tbl => {
-      tbl.increments();
-      tbl
-        .integer("student_id")
-        .unsigned()
-        .references("students.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
-      tbl
-        .integer("skill_id")
-        .unsigned()
-        .references("skills.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
+      tbl.string("skill").unique();
     })
 
     .createTable("skill_types", tbl => {
       tbl.increments();
       tbl
-        .integer("skills_id")
+        .integer("skill_id")
         .unsigned()
         .references("skills.id")
         .notNullable()
@@ -123,6 +105,24 @@ exports.up = function(knex, Promise) {
       tbl.string("github");
       tbl.string("linkedin");
       tbl.string("twitter");
+    })
+
+    .createTable("student_skills", tbl => {
+      tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("skill_id")
+        .unsigned()
+        .references("skills.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
     })
 
     .createTable("hired", tbl => {

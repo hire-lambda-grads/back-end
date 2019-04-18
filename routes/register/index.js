@@ -9,8 +9,7 @@ router.route("/").post(async (req, res) => {
     user.email &&
     user.password &&
     user.first_name &&
-    user.last_name &&
-    user.role_id
+    user.last_name
   ) {
     try {
       const count = await actions.addUser(user);
