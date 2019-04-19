@@ -146,7 +146,7 @@ function updateStudent(account_id, info, skills) {
   return new Promise(async (resolve, reject) => {
     let student, newSkills;
     try {
-      student = await db("students")
+      [student] = await db("students")
         .where({ account_id })
         .update(info, [
           "cohort_id",
@@ -160,7 +160,6 @@ function updateStudent(account_id, info, skills) {
           "linkedin",
           "twitter"
         ]);
-      console.log(student);
       await db("student_skills")
         .where({ student_id: info.id })
         .del();
@@ -176,21 +175,6 @@ function updateStudent(account_id, info, skills) {
 
         newSkills = newSkills.map(skill => skill.skill);
       }
-      // student = await db("students")
-      //   .select(
-      //     "cohort_id",
-      //     "profile_pic",
-      //     "location",
-      //     "relocatable",
-      //     "about",
-      //     "job_searching",
-      //     "website",
-      //     "github",
-      //     "linkedin",
-      //     "twitter"
-      //   )
-      //   .where({ account_id })
-      //   .first();
     } catch (error) {
       console.log(error);
       reject(error);
