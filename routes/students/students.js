@@ -146,19 +146,9 @@ function updateStudent(account_id, info, skills) {
   return new Promise(async (resolve, reject) => {
     let student, newSkills;
     try {
-      await db("students")
-        .where({ account_id })
-        .update(info);
-      await db("student_skills")
-        .where({ student_id: info.id })
-        .del();
-      if (skills.length > 0) {
-        //Need to restructure skills with student ID for student_skills table. Handling here so FE doesn't have to.
-        skills = skills.map(id => ({ skill_id: id, student_id: info.id }));
-        await db("student_skills").insert(skills);
-      }
       student = await db("students")
-        .select(
+        .where({ account_id })
+        .update(info, [
           "cohort_id",
           "profile_pic",
           "location",
@@ -169,15 +159,40 @@ function updateStudent(account_id, info, skills) {
           "github",
           "linkedin",
           "twitter"
-        )
-        .where({ account_id })
-        .first();
-      newSkills = await db("student_skills")
-        .select("skills.skill")
-        .innerJoin("skills", "skills.id", "student_skills.skill_id")
-        .where({ "student_skills.student_id": info.id });
-      newSkills = newSkills.map(skill => skill.skill);
+        ]);
+      console.log(student);
+      await db("student_skills")
+        .where({ student_id: info.id })
+        .del();
+      if (skills.length > 0) {
+        //Need to restructure skills with student ID for student_skills table. Handling here so FE doesn't have to.
+        skills = skills.map(id => ({ skill_id: id, student_id: info.id }));
+        await db("student_skills").insert(skills);
+
+        newSkills = await db("student_skills")
+          .select("skills.skill")
+          .innerJoin("skills", "skills.id", "student_skills.skill_id")
+          .where({ "student_skills.student_id": info.id });
+
+        newSkills = newSkills.map(skill => skill.skill);
+      }
+      // student = await db("students")
+      //   .select(
+      //     "cohort_id",
+      //     "profile_pic",
+      //     "location",
+      //     "relocatable",
+      //     "about",
+      //     "job_searching",
+      //     "website",
+      //     "github",
+      //     "linkedin",
+      //     "twitter"
+      //   )
+      //   .where({ account_id })
+      //   .first();
     } catch (error) {
+      console.log(error);
       reject(error);
     }
     resolve({
