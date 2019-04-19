@@ -4,9 +4,9 @@ module.exports = {
   development: {
     client: "pg",
     connection: {
-      database: "HireLambdaStudents",
-      user: "brandon",
-      password: "apollo"
+      database: process.env.LOCAL_DB,
+      user: process.env.LOCAL_DB_USER,
+      password: process.env.LOCAL_DB_PASS
     },
     pool: {
       min: 2,
@@ -24,9 +24,9 @@ module.exports = {
   testing: {
     client: "pg",
     connection: {
-      database: "HireLambdaStudents",
-      user: "brandon",
-      password: "apollo"
+      database: process.env.LOCAL_DB,
+      user: process.env.LOCAL_DB_USER,
+      password: process.env.LOCAL_DB_PASS
     },
     pool: {
       min: 2,
