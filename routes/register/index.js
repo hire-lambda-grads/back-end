@@ -26,7 +26,7 @@ router.route("/").post(async (req, res) => {
   } else {
     res.status(400).json({
       message:
-        "Please provide a  email, password, first name and last name for registration."
+        "Please provide an email, password, first name and last name for registration."
     });
   }
 });
