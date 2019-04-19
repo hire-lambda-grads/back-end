@@ -102,8 +102,8 @@ function getStudentCards() {
       "cohort_types.type as track"
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
-    .innerJoin("cohorts", "students.cohort_id", "cohorts.id")
-    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id");
+    .leftOuterJoin("cohorts", "students.cohort_id", "cohorts.id")
+    .leftOuterJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id");
   // .where({ "students.job_searching": true });
 }
 
