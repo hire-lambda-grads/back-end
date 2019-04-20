@@ -78,8 +78,8 @@ function getStudentById(id) {
       "cohort_types.type as track"
     )
     .innerJoin("accounts", "accounts.id", "students.account_id")
-    .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
-    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
+    .leftOuterJoin("cohorts", "cohorts.id", "students.cohort_id")
+    .leftOuterJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
     .where({ "students.id": id })
     .first();
 }
