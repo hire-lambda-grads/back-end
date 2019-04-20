@@ -1,3 +1,4 @@
+const bluebird = require("bluebird");
 const db = require("../../data/config");
 
 module.exports = {
@@ -85,26 +86,55 @@ function getStudentById(id) {
 }
 
 function getStudentCards() {
-  return db("students")
-    .select(
-      "students.id",
-      "students.profile_pic",
-      "students.location",
-      "students.relocatable",
-      "students.website",
-      "students.github",
-      "students.linkedin",
-      "students.twitter",
-      "students.careers_approved",
-      "accounts.first_name",
-      "accounts.last_name",
-      "cohorts.cohort_name",
-      "cohort_types.type as track"
-    )
-    .innerJoin("accounts", "accounts.id", "students.account_id")
-    .leftOuterJoin("cohorts", "students.cohort_id", "cohorts.id")
-    .leftOuterJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id");
-  // .where({ "students.job_searching": true });
+  return new Promise(async (resolve, reject) => {
+    try {
+      let cards = await db("students")
+        .select(
+          "students.id",
+          "students.profile_pic",
+          "students.location",
+          "students.relocatable",
+          "students.website",
+          "students.github",
+          "students.linkedin",
+          "students.twitter",
+          "students.careers_approved",
+          "accounts.first_name",
+          "accounts.last_name",
+          "cohorts.cohort_name",
+          "cohort_types.type as track"
+        )
+        .innerJoin("accounts", "accounts.id", "students.account_id")
+        .leftOuterJoin("cohorts", "students.cohort_id", "cohorts.id")
+        .leftOuterJoin(
+          "cohort_types",
+          "cohorts.cohort_type_id",
+          "cohort_types.id"
+        );
+      // .where({ "students.job_searching": true });
+
+      cards = bluebird.map(cards, async card => {
+        skills = await db("student_skills")
+          .select("skills.skill")
+          .innerJoin("skills", "skills.id", "student_skills.skill_id")
+          .where({ "student_skills.student_id": card.id });
+
+        return {
+          ...card,
+          skills
+        };
+      });
+      resolve(cards);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+  //SELECT cm.id, cm.name, cm.city, array_agg(array[cast(ch.id as varchar), ch.name]) as Children
+  // FROM communities as cm
+  // JOIN children as ch on ch.community_id = cm.id
+  // GROUP BY cm.id
+  // ORDER BY cm.id;
 }
 
 function getStudentProfile(account_id) {
