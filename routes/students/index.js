@@ -8,7 +8,7 @@ module.exports = router;
 
 router.route("/cards").get(async (req, res) => {
   try {
-    const students = await actions.getStudentCards();
+    const { rows: students } = await actions.getStudentCards();
     res.status(200).json(students);
   } catch (error) {
     res
