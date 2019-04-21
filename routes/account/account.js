@@ -47,6 +47,7 @@ function updateAccount(id, info) {
           .first()
           .transacting(t);
       } catch (error) {
+        t.rollback();
         reject(error);
       }
     });

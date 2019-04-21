@@ -10,21 +10,19 @@ function addUser(user) {
   user.password = bcrypt.hashSync(user.password, 8);
 
   return new Promise(async (resolve, reject) => {
-    try {
-      const count = await db("accounts").insert(user);
-      if (count) {
-        const { id: account_id } = await db("accounts")
-          .select("id")
-          .where({ email: user.email })
-          .first();
-        resolve(db("students").insert({ account_id }));
-      } else {
-        throw new Error(
-          "Something went wrong adding the account as a student."
-        );
+    await db.transaction(async t => {
+      try {
+        const [{ id: account_id }] = await db("accounts")
+          .insert(user, ["id"])
+          .transacting(t);
+        await db("students")
+          .insert({ account_id })
+          .transacting(t);
+      } catch (error) {
+        t.rollback();
+        reject(error);
       }
-    } catch (error) {
-      reject(error);
-    }
+    });
+    resolve();
   });
 }
