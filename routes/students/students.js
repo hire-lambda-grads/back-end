@@ -108,43 +108,51 @@ function getStudentLocations() {
 function updateStudent(account_id, info, skills) {
   return new Promise(async (resolve, reject) => {
     let student, newSkills;
-    try {
-      [student] = await db("students")
-        .where({ account_id })
-        .update(info, [
-          "cohort_id",
-          "profile_pic",
-          "location",
-          "relocatable",
-          "about",
-          "job_searching",
-          "website",
-          "github",
-          "linkedin",
-          "twitter"
-        ]);
-      await db("student_skills")
-        .where({ student_id: info.id })
-        .del();
-      if (skills.length > 0) {
-        //Need to restructure skills with student ID for student_skills table. Handling here so FE doesn't have to.
-        skills = skills.map(id => ({ skill_id: id, student_id: info.id }));
-        await db("student_skills").insert(skills);
+    await db.transaction(async t => {
+      try {
+        [student] = await db("students")
+          .update(info, [
+            "cohort_id",
+            "profile_pic",
+            "location",
+            "relocatable",
+            "about",
+            "job_searching",
+            "website",
+            "github",
+            "linkedin",
+            "twitter"
+          ])
+          .where({ account_id })
+          .transacting(t);
 
-        newSkills = await db("student_skills")
-          .select("skills.skill")
-          .innerJoin("skills", "skills.id", "student_skills.skill_id")
-          .where({ "student_skills.student_id": info.id });
+        await db("student_skills")
+          .where({ student_id: info.id })
+          .del()
+          .transacting(t);
 
-        newSkills = newSkills.map(skill => skill.skill);
+        if (skills) {
+          skills = skills.map(id => ({ skill_id: id, student_id: info.id }));
+          await db("student_skills")
+            .insert(skills)
+            .transacting(t);
+
+          newSkills = await db("student_skills")
+            .select("skills.skill")
+            .innerJoin("skills", "skills.id", "student_skills.skill_id")
+            .where({ "student_skills.student_id": info.id })
+            .transacting(t);
+        }
+      } catch (error) {
+        t.rollback();
+        console.log("we rollin back");
+        reject(error);
+        console.error(error);
       }
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
+    });
     resolve({
       ...student,
-      skills: newSkills
+      skills: newSkills.map(s => s.skill) || []
     });
   });
 }
