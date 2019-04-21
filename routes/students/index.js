@@ -63,7 +63,7 @@ router
     const account_id = req.token.subject;
 
     try {
-      const student = await actions.getStudent(account_id);
+      const student = await actions.getStudentForUpdate(account_id);
       res.status(200).json(student);
     } catch (error) {
       res.status(500).json({

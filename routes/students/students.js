@@ -1,8 +1,7 @@
-const bluebird = require("bluebird");
 const db = require("../../data/config");
 
 module.exports = {
-  getStudent,
+  getStudentForUpdate,
   getStudentById,
   getStudentCards,
   getStudentLocations,
@@ -10,42 +9,25 @@ module.exports = {
   updateStudent
 };
 
-function getStudent(account_id) {
+function getStudentForUpdate(account_id) {
   return new Promise(async (resolve, reject) => {
     try {
-      let student = await db("students")
-        .where({ account_id })
-        .select(
-          "id",
-          "cohort_id",
-          "profile_pic",
-          "location",
-          "relocatable",
-          "about",
-          "job_searching",
-          "website",
-          "github",
-          "linkedin",
-          "twitter"
-        )
-        .first();
+      let {
+        rows: [student]
+      } = await db.raw(
+        `select s.id, s.cohort_id, s.profile_pic, s.location, s.relocatable, s.about, s.job_searching, s.website, s.github, s.linkedin, s.twitter, array_agg(sk.skill) as skills from students as s left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id where s.account_id = ${account_id} group by s.id, s.cohort_id, s.profile_pic, s.location, s.relocatable, s.about, s.job_searching, s.website, s.github, s.linkedin, s.twitter`
+      );
       if (student) {
         const cohort_options = await db("cohorts").select(
           "id as cohort_id",
           "cohort_name"
         );
-        let skills = await db("student_skills")
-          .select("skills.skill")
-          .innerJoin("skills", "skills.id", "student_skills.skill_id")
-          .where({ "student_skills.student_id": student.id });
-        skills = skills.map(skill => skill.skill);
         const skill_options = await db("skills").select(
           "id as skill_id",
           "skill"
         );
         student = {
           ...student,
-          skills,
           skill_options, //List of student's current skills
           cohort_options //So update form can have all cohort_id's to tie to a student
         };
