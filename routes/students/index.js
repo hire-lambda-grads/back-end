@@ -31,7 +31,9 @@ router.route("/profile").get(restricted(), async (req, res) => {
 router.route("/profile/:id").get(async (req, res) => {
   const { id } = req.params;
   try {
-    const student = await actions.getStudentById(id);
+    const {
+      rows: [student]
+    } = await actions.getStudentById(id);
     if (student) {
       res.status(200).json(student);
     } else {

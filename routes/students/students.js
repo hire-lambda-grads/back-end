@@ -42,29 +42,32 @@ function getStudentForUpdate(account_id) {
 }
 
 function getStudentById(id) {
-  return db("students")
-    .select(
-      "students.profile_pic",
-      "students.location",
-      "students.relocatable",
-      "students.about",
-      "students.job_searching",
-      "students.careers_approved",
-      "students.did_pm",
-      "students.website",
-      "students.github",
-      "students.linkedin",
-      "students.twitter",
-      "accounts.first_name",
-      "accounts.last_name",
-      "cohorts.cohort_name",
-      "cohort_types.type as track"
-    )
-    .innerJoin("accounts", "accounts.id", "students.account_id")
-    .leftOuterJoin("cohorts", "cohorts.id", "students.cohort_id")
-    .leftOuterJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
-    .where({ "students.id": id })
-    .first();
+  return db.raw(
+    `select s.*, a.first_name, a.last_name, c.cohort_name, ct.type as track, array_agg(sk.skill) as skills from students as s join accounts as a on a.id = s.account_id left outer join cohorts as c on s.cohort_id = c.id left outer join cohort_types as ct on ct.id = c.cohort_type_id left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id where s.id = ${id} group by s.id, a.first_name, a.last_name, c.cohort_name, ct.type`
+  );
+  // return db("students")
+  //   .select(
+  //     "students.profile_pic",
+  //     "students.location",
+  //     "students.relocatable",
+  //     "students.about",
+  //     "students.job_searching",
+  //     "students.careers_approved",
+  //     "students.did_pm",
+  //     "students.website",
+  //     "students.github",
+  //     "students.linkedin",
+  //     "students.twitter",
+  //     "accounts.first_name",
+  //     "accounts.last_name",
+  //     "cohorts.cohort_name",
+  //     "cohort_types.type as track"
+  //   )
+  //   .innerJoin("accounts", "accounts.id", "students.account_id")
+  //   .leftOuterJoin("cohorts", "cohorts.id", "students.cohort_id")
+  //   .leftOuterJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
+  //   .where({ "students.id": id })
+  //   .first();
 }
 
 function getStudentCards() {
@@ -145,9 +148,7 @@ function updateStudent(account_id, info, skills) {
         }
       } catch (error) {
         t.rollback();
-        console.log("we rollin back");
         reject(error);
-        console.error(error);
       }
     });
     resolve({
