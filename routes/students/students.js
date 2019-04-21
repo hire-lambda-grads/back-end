@@ -100,9 +100,9 @@ function getStudentProfile(account_id) {
 }
 
 function getStudentLocations() {
-  return db("students")
-    .select("location", "job_searching")
-    .whereNotNull("location");
+  return db.raw(
+    "select a.first_name, a.last_name, s.location, s.profile_pic from students as s join accounts as a on a.id = s.account_id where s.location is not null"
+  );
 }
 
 function updateStudent(account_id, info, skills) {
