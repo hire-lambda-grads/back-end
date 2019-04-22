@@ -57,7 +57,7 @@ router
 
 router
   .route("/:resource/:id")
-  .put(async (req, res) => {
+  .put(async (req, res, next) => {
     const { id } = req.params;
     const info = req.body;
 
