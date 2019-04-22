@@ -50,14 +50,10 @@ function getCohorts() {
 function updateCohort(id, info) {
   return new Promise(async (resolve, reject) => {
     try {
-      const count = await db("cohorts")
+      const res = await db("cohorts")
         .where({ id })
-        .update(info);
-      if (count) {
-        resolve(db("cohorts").where({ id }));
-      } else {
-        reject();
-      }
+        .update(info, "*");
+      resolve(res);
     } catch (error) {
       reject();
     }
