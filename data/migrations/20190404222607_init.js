@@ -18,11 +18,6 @@ exports.up = function(knex, Promise) {
         .notNullable()
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
-      tbl
-        .string("email")
-        .notNullable()
-        .unique();
-      tbl.string("password").notNullable();
       tbl.string("first_name").notNullable();
       tbl.string("last_name").notNullable();
     })
@@ -92,6 +87,13 @@ exports.up = function(knex, Promise) {
 
     .createTable("top_skills", tbl => {
       tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
       tbl.string("skill");
     })
 
@@ -117,38 +119,6 @@ exports.up = function(knex, Promise) {
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
       tbl.string("hobby");
-    })
-
-    .createTable("jobs", tbl => {
-      tbl.increments();
-      tbl
-        .integer("student_id")
-        .unsigned()
-        .references("students.id")
-        .notNullable()
-        .onDelete("RESTRICT")
-        .onUpdate("CASCADE");
-      tbl.string("company");
-      tbl.string("title");
-      tbl.string("description");
-      tbl.date("start_date");
-      tbl.date("end_date");
-    })
-
-    .createTable("education", tbl => {
-      tbl.increments();
-      tbl
-        .integer("student_id")
-        .unsigned()
-        .references("students.id")
-        .notNullable()
-        .onDelete("RESTRICT")
-        .onUpdate("CASCADE");
-      tbl.string("school");
-      tbl.string("major");
-      tbl.string("description");
-      tbl.date("start_date");
-      tbl.date("end_date");
     })
 
     .createTable("endorsements", tbl => {
@@ -260,8 +230,6 @@ exports.down = function(knex, Promise) {
     .dropTableIfExists("top_skills")
     .dropTableIfExists("desired_locations")
     .dropTableIfExists("hobbies")
-    .dropTableIfExists("jobs")
-    .dropTableIfExists("education")
     .dropTableIfExists("endorsements")
     .dropTableIfExists("projects")
     .dropTableIfExists("project_media")

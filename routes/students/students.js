@@ -58,18 +58,18 @@ function getStudentProfile(account_id) {
     let student,
       skills,
       hobbies,
-      jobs,
-      education,
       endorsements,
       top_skills,
-      desired_locations;
+      desired_locations,
+      top_projects,
+      projects;
     await db.transaction(async t => {
       try {
         student = await db("students as s")
           .select(
-            "s.*",
             "a.first_name",
             "a.last_name",
+            "s.*",
             "c.cohort_name",
             "t.name as track"
           )
@@ -90,28 +90,6 @@ function getStudentProfile(account_id) {
           .where({ student_id: student.id })
           .transacting(t);
 
-        jobs = await db("jobs as j")
-          .select(
-            "j.company",
-            "j.title",
-            "j.description",
-            "j.start_date",
-            "j.end_date"
-          )
-          .where({ student_id: student.id })
-          .transacting(t);
-
-        education = await db("education as e")
-          .select(
-            "e.school",
-            "e.major",
-            "e.description",
-            "e.start_date",
-            "e.end_date"
-          )
-          .where({ student_id: student.id })
-          .transacting(t);
-
         endorsements = await db("endorsements as e")
           .select("e.message", "a.first_name", "a.last_name")
           .join("accounts as a", "a.id", "e.from_id")
@@ -127,6 +105,36 @@ function getStudentProfile(account_id) {
           .select("dl.location")
           .where({ student_id: student.id })
           .transacting(t);
+
+        top_projects = await db("top_projects as t")
+          .select(
+            "p.id",
+            "p.name",
+            "p.github",
+            "pm.media",
+            db.raw("array_agg(ps.skill) as skills")
+          )
+          .join("projects as p", "p.id", "t.project_id")
+          .leftOuterJoin("project_media as pm", "pm.project_id", "p.id")
+          .leftOuterJoin("project_skills as ps", "ps.project_id", "p.id")
+          .where({ "t.student_id": student.id, approved: true })
+          .groupBy("p.name", "p.github", "pm.media", "p.id")
+          .transacting(t);
+
+        projects = await db("student_projects as sp")
+          .select(
+            "p.id",
+            "p.name",
+            "p.github",
+            "pm.media",
+            db.raw("array_agg(ps.skill) as skills")
+          )
+          .join("projects as p", "p.id", "sp.project_id")
+          .leftOuterJoin("project_media as pm", "pm.project_id", "p.id")
+          .leftOuterJoin("project_skills as ps", "ps.project_id", "p.id")
+          .where({ "sp.student_id": student.id, approved: true })
+          .groupBy("p.name", "p.github", "pm.media", "p.id")
+          .transacting(t);
       } catch (error) {
         t.rollback();
         reject(error);
@@ -134,13 +142,13 @@ function getStudentProfile(account_id) {
     });
     resolve({
       ...student,
+      top_skills,
       skills,
       hobbies,
-      jobs,
-      education,
       endorsements,
-      top_skills,
-      desired_locations
+      desired_locations,
+      top_projects,
+      projects
     });
   });
 }
