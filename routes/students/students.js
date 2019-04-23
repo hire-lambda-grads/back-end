@@ -54,9 +54,95 @@ function getStudentCards() {
 }
 
 function getStudentProfile(account_id) {
-  return db.raw(
-    `select s.*, a.first_name, a.last_name, c.cohort_name, ct.type as track, array_agg(sk.skill) as skills from students as s join accounts as a on a.id = s.account_id left outer join cohorts as c on s.cohort_id = c.id left outer join cohort_types as ct on ct.id = c.cohort_type_id left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id where s.account_id = ${account_id} group by s.id, a.first_name, a.last_name, c.cohort_name, ct.type`
-  );
+  return new Promise(async (resolve, reject) => {
+    let student,
+      skills,
+      hobbies,
+      jobs,
+      education,
+      endorsements,
+      top_skills,
+      desired_locations;
+    await db.transaction(async t => {
+      try {
+        student = await db("students as s")
+          .select(
+            "s.*",
+            "a.first_name",
+            "a.last_name",
+            "c.cohort_name",
+            "t.name as track"
+          )
+          .leftOuterJoin("accounts as a", "a.id", "s.account_id")
+          .leftOuterJoin("cohorts as c", "c.id", "s.cohort_id")
+          .leftOuterJoin("tracks as t", "t.id", "s.track_id")
+          .where({ "s.account_id": account_id })
+          .first()
+          .transacting(t);
+
+        skills = await db("student_skills as s")
+          .select("s.skill")
+          .where({ student_id: student.id })
+          .transacting(t);
+
+        hobbies = await db("hobbies as h")
+          .select("h.hobby")
+          .where({ student_id: student.id })
+          .transacting(t);
+
+        jobs = await db("jobs as j")
+          .select(
+            "j.company",
+            "j.title",
+            "j.description",
+            "j.start_date",
+            "j.end_date"
+          )
+          .where({ student_id: student.id })
+          .transacting(t);
+
+        education = await db("education as e")
+          .select(
+            "e.school",
+            "e.major",
+            "e.description",
+            "e.start_date",
+            "e.end_date"
+          )
+          .where({ student_id: student.id })
+          .transacting(t);
+
+        endorsements = await db("endorsements as e")
+          .select("e.message", "a.first_name", "a.last_name")
+          .join("accounts as a", "a.id", "e.from_id")
+          .where({ "e.to_id": student.id })
+          .transacting(t);
+
+        top_skills = await db("top_skills as ts")
+          .select("ts.skill")
+          .where({ student_id: student.id })
+          .transacting(t);
+
+        desired_locations = await db("desired_locations as dl")
+          .select("dl.location")
+          .where({ student_id: student.id })
+          .transacting(t);
+      } catch (error) {
+        t.rollback();
+        reject(error);
+      }
+    });
+    resolve({
+      ...student,
+      skills,
+      hobbies,
+      jobs,
+      education,
+      endorsements,
+      top_skills,
+      desired_locations
+    });
+  });
 }
 
 function getStudentLocations() {
