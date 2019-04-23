@@ -25,16 +25,12 @@ exports.up = function(knex, Promise) {
       tbl.string("password").notNullable();
       tbl.string("first_name").notNullable();
       tbl.string("last_name").notNullable();
-      tbl
-        .boolean("verified_student")
-        .notNullable()
-        .defaultTo(false);
     })
 
-    .createTable("cohort_types", tbl => {
+    .createTable("tracks", tbl => {
       tbl.increments();
       tbl
-        .string("type")
+        .string("name")
         .notNullable()
         .unique();
     })
@@ -42,41 +38,9 @@ exports.up = function(knex, Promise) {
     .createTable("cohorts", tbl => {
       tbl.increments();
       tbl
-        .integer("cohort_type_id")
-        .unsigned()
-        .references("cohort_types.id")
-        .notNullable()
-        .onDelete("RESTRICT")
-        .onUpdate("CASCADE");
-      tbl
         .string("cohort_name")
         .notNullable()
         .unique();
-      tbl.date("start_date");
-      tbl.date("end_date");
-    })
-
-    .createTable("skills", tbl => {
-      tbl.increments();
-      tbl.string("skill").unique();
-    })
-
-    .createTable("skill_types", tbl => {
-      tbl.increments();
-      tbl
-        .integer("skill_id")
-        .unsigned()
-        .references("skills.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
-      tbl
-        .integer("cohort_type_id")
-        .unsigned()
-        .references("cohort_types.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
     })
 
     .createTable("students", tbl => {
@@ -94,17 +58,24 @@ exports.up = function(knex, Promise) {
         .references("cohorts.id")
         .onDelete("RESTRICT")
         .onUpdate("CASCADE");
+      tbl
+        .integer("track_id")
+        .unsigned()
+        .references("tracks.id")
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
       tbl.string("profile_pic").unique();
       tbl.string("location");
-      tbl.boolean("relocatable");
-      tbl.text("about", 840);
-      tbl.boolean("job_searching").defaultTo(false);
-      tbl.boolean("careers_approved").defaultTo(false);
-      tbl.boolean("did_pm").defaultTo(false);
+      tbl.string("resume");
+      tbl.text("about", 500);
+      tbl.boolean("approved").defaultTo(false);
+      tbl.boolean("hired").defaultTo(false);
+      tbl.boolean("graduated").defaultTo(false);
       tbl.string("website");
       tbl.string("github");
       tbl.string("linkedin");
       tbl.string("twitter");
+      tbl.string("acclaim");
     })
 
     .createTable("student_skills", tbl => {
@@ -116,37 +87,185 @@ exports.up = function(knex, Promise) {
         .notNullable()
         .onDelete("CASCADE")
         .onUpdate("CASCADE");
-      tbl
-        .integer("skill_id")
-        .unsigned()
-        .references("skills.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
+      tbl.string("skill");
     })
 
-    .createTable("hired", tbl => {
+    .createTable("top_skills", tbl => {
+      tbl.increments();
+      tbl.string("skill");
+    })
+
+    .createTable("desired_locations", tbl => {
       tbl.increments();
       tbl
         .integer("student_id")
         .unsigned()
-        .notNullable()
         .references("students.id")
-        .onDelete("CASCADE")
+        .notNullable()
+        .onDelete("RESTRICT")
         .onUpdate("CASCADE");
-      tbl.date("hire_date").notNullable();
+      tbl.string("location");
+    })
+
+    .createTable("hobbies", tbl => {
+      tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("hobby");
+    })
+
+    .createTable("jobs", tbl => {
+      tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("company");
+      tbl.string("title");
+      tbl.string("description");
+      tbl.date("start_date");
+      tbl.date("end_date");
+    })
+
+    .createTable("education", tbl => {
+      tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("school");
+      tbl.string("major");
+      tbl.string("description");
+      tbl.date("start_date");
+      tbl.date("end_date");
+    })
+
+    .createTable("endorsements", tbl => {
+      tbl.increments();
+      tbl
+        .integer("from_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("to_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("message");
+    })
+
+    .createTable("projects", tbl => {
+      tbl.increments();
+      tbl
+        .integer("track_id")
+        .unsigned()
+        .references("tracks.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("name");
+      tbl.string("github");
+      tbl.string("website");
+      tbl.string("tech_pitch");
+      tbl.string("customer_pitch");
+      tbl.string("medium");
+      tbl.boolean("approved").defaultTo(false);
+    })
+
+    .createTable("project_media", tbl => {
+      tbl.increments();
+      tbl
+        .integer("project_id")
+        .unsigned()
+        .references("projects.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("media");
+    })
+
+    .createTable("project_skills", tbl => {
+      tbl.increments();
+      tbl
+        .integer("project_id")
+        .unsigned()
+        .references("projects.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl.string("skill");
+    })
+
+    .createTable("student_projects", tbl => {
+      tbl.increments();
+      tbl
+        .integer("project_id")
+        .unsigned()
+        .references("projects.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+    })
+
+    .createTable("top_projects", tbl => {
+      tbl.increments();
+      tbl
+        .integer("project_id")
+        .unsigned()
+        .references("projects.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("RESTRICT")
+        .onUpdate("CASCADE");
     });
 };
 
 exports.down = function(knex, Promise) {
   return knex.schema
-    .dropTableIfExists("accounts")
-    .dropTableIfExists("skills")
-    .dropTableIfExists("student_skills")
-    .dropTableIfExists("skill_types")
-    .dropTableIfExists("hired")
-    .dropTableIfExists("students")
     .dropTableIfExists("roles")
+    .dropTableIfExists("accounts")
+    .dropTableIfExists("tracks")
     .dropTableIfExists("cohorts")
-    .dropTableIfExists("cohort_types");
+    .dropTableIfExists("students")
+    .dropTableIfExists("student_skills")
+    .dropTableIfExists("top_skills")
+    .dropTableIfExists("desired_locations")
+    .dropTableIfExists("hobbies")
+    .dropTableIfExists("jobs")
+    .dropTableIfExists("education")
+    .dropTableIfExists("endorsements")
+    .dropTableIfExists("projects")
+    .dropTableIfExists("project_media")
+    .dropTableIfExists("project_skills")
+    .dropTableIfExists("student_projects")
+    .dropTableIfExists("top_projects");
 };
