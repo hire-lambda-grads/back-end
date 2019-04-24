@@ -8,7 +8,7 @@ module.exports = router;
 
 router.route("/cards").get(async (req, res) => {
   try {
-    const { rows: students } = await actions.getStudentCards();
+    students = await actions.getStudentCards();
     res.status(200).json(students);
   } catch (error) {
     res
@@ -19,10 +19,9 @@ router.route("/cards").get(async (req, res) => {
 
 router.route("/profile").get(restricted(), async (req, res) => {
   const account_id = req.token.subject;
+  const { update } = req.query;
   try {
-    const {
-      rows: [profile]
-    } = await actions.getStudentProfile(account_id);
+    const profile = await actions.getStudentProfile(account_id, update);
     res.status(200).json(profile);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving the user profile." });
@@ -32,9 +31,7 @@ router.route("/profile").get(restricted(), async (req, res) => {
 router.route("/profile/:id").get(async (req, res) => {
   const { id } = req.params;
   try {
-    const {
-      rows: [student]
-    } = await actions.getStudentById(id);
+    const student = await actions.getStudentById(id);
     if (student) {
       res.status(200).json(student);
     } else {
@@ -49,55 +46,41 @@ router.route("/profile/:id").get(async (req, res) => {
   }
 });
 
-router.route("/locations").get(async (req, res) => {
+// router.route("/locations").get(async (req, res) => {
+//   try {
+//     const { rows: locations } = await actions.getStudentLocations();
+//     res.status(200).json(locations);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Soemthing went wrong retrieving the student locations."
+//     });
+//   }
+// });
+
+router.route("/update").put(restricted(), async (req, res) => {
+  let {
+    account_id,
+    careers_approved,
+    did_pm,
+    skills,
+    ...filteredInfo
+  } = req.body;
+  account_id = req.token.subject;
+
   try {
-    const { rows: locations } = await actions.getStudentLocations();
-    res.status(200).json(locations);
+    const updated = await actions.updateStudent(
+      account_id,
+      filteredInfo,
+      skills
+    );
+    res.status(200).json(updated);
   } catch (error) {
     res.status(500).json({
-      message: "Soemthing went wrong retrieving the student locations."
+      message: "Something went wrong updating the user information.",
+      error
     });
   }
 });
-
-router
-  .route("/update")
-  .get(restricted(), async (req, res) => {
-    const account_id = req.token.subject;
-
-    try {
-      const student = await actions.getStudentForUpdate(account_id);
-      res.status(200).json(student);
-    } catch (error) {
-      res.status(500).json({
-        message: "Something went wrong retrieving student information."
-      });
-    }
-  })
-  .put(restricted(), async (req, res) => {
-    let {
-      account_id,
-      careers_approved,
-      did_pm,
-      skills,
-      ...filteredInfo
-    } = req.body;
-    account_id = req.token.subject;
-
-    try {
-      const updated = await actions.updateStudent(
-        account_id,
-        filteredInfo,
-        skills
-      );
-      res.status(200).json(updated);
-    } catch (error) {
-      res.status(500).json({
-        message: "Something went wrong updating the user information.",
-        error
-      });
-    }
-  });
 
 router
   .route("/update/profile_picture")
