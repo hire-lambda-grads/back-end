@@ -26,13 +26,15 @@ function getAccount(id) {
 
 function updateAccount(id, info) {
   return new Promise(async (resolve, reject) => {
-    try {
-      await db("accounts")
-        .where({ id })
-        .update(info);
+    let account;
+    await db.transaction(async t => {
+      try {
+        await db("accounts")
+          .where({ id })
+          .update(info)
+          .transacting(t);
 
-      resolve(
-        db("accounts")
+        account = await db("accounts")
           .select(
             "accounts.email",
             "accounts.first_name",
@@ -43,9 +45,12 @@ function updateAccount(id, info) {
           .where({ "accounts.id": id })
           .innerJoin("roles", "roles.id", "accounts.role_id")
           .first()
-      );
-    } catch (error) {
-      reject();
-    }
+          .transacting(t);
+      } catch (error) {
+        t.rollback();
+        reject(error);
+      }
+    });
+    resolve(account);
   });
 }

@@ -10,10 +10,10 @@ module.exports = {
 function addCohort(info) {
   return new Promise(async (resolve, reject) => {
     try {
-      await db("cohorts").insert(info);
-      resolve(db("cohorts").where({ cohort_name: info.cohort_name }));
+      const [res] = await db("cohorts").insert(info, "*");
+      resolve(res);
     } catch (error) {
-      reject();
+      reject(error);
     }
   });
 }
@@ -26,38 +26,34 @@ function deleteCohort(id) {
 
 function getCohorts() {
   return new Promise(async (resolve, reject) => {
-    try {
-      let cohorts = await db("cohorts");
-      if (cohorts) {
-        const type_options = await db("cohort_types").select(
-          "id as cohort_type_id",
-          "type"
-        );
-        const mergedFields = cohorts.map(cohort => ({
+    let cohorts, type_options, mergedFields;
+    await db.transaction(async t => {
+      try {
+        cohorts = await db("cohorts").transacting(t);
+        type_options = await db("cohort_types")
+          .select("id as cohort_type_id", "type")
+          .transacting(t);
+
+        mergedFields = cohorts.map(cohort => ({
           ...cohort,
           type_options
         }));
+
         resolve(mergedFields);
-      } else {
-        reject();
+      } catch (error) {
+        reject(error);
       }
-    } catch (error) {
-      reject();
-    }
+    });
   });
 }
 
 function updateCohort(id, info) {
   return new Promise(async (resolve, reject) => {
     try {
-      const count = await db("cohorts")
+      const [res] = await db("cohorts")
         .where({ id })
-        .update(info);
-      if (count) {
-        resolve(db("cohorts").where({ id }));
-      } else {
-        reject();
-      }
+        .update(info, "*");
+      resolve(res);
     } catch (error) {
       reject();
     }

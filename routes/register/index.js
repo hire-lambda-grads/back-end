@@ -9,16 +9,11 @@ router.route("/").post(async (req, res) => {
     user.email &&
     user.password &&
     user.first_name &&
-    user.last_name &&
-    user.role_id
+    user.last_name
   ) {
     try {
-      const count = await actions.addUser(user, user.role_id);
-      if (count) {
-        res.status(201).json({ message: "User successfully added." });
-      } else {
-        res.status(400).json({ message: "The user already exists." });
-      }
+      await actions.addUser(user);
+      res.status(201).json({ message: "User successfully added." });
     } catch (error) {
       res
         .status(500)
@@ -27,7 +22,7 @@ router.route("/").post(async (req, res) => {
   } else {
     res.status(400).json({
       message:
-        "Please provide a  email, password, first name and last name for registration."
+        "Please provide an email, password, first name and last name for registration."
     });
   }
 });

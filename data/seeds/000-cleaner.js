@@ -1,9 +1,5 @@
-const cleaner = require("knex-cleaner");
-
-const options = {
-  ignoreTables: ["accounts", "students", "hired"]
-};
-
-exports.seed = function(knex) {
-  return cleaner.clean(knex, options);
+exports.seed = function(knex, Promise) {
+  return knex.schema.raw(
+    "TRUNCATE roles, accounts, cohort_types, cohorts, skills, skill_types, students, student_skills, hired RESTART IDENTITY;"
+  );
 };

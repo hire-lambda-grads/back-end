@@ -58,31 +58,13 @@ exports.up = function(knex, Promise) {
 
     .createTable("skills", tbl => {
       tbl.increments();
-      tbl.string("skill");
-    })
-
-    .createTable("student_skills", tbl => {
-      tbl.increments();
-      tbl
-        .integer("student_id")
-        .unsigned()
-        .references("students.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
-      tbl
-        .integer("skill_id")
-        .unsigned()
-        .references("skills.id")
-        .notNullable()
-        .onDelete("CASCADE")
-        .onUpdate("CASCADE");
+      tbl.string("skill").unique();
     })
 
     .createTable("skill_types", tbl => {
       tbl.increments();
       tbl
-        .integer("skills_id")
+        .integer("skill_id")
         .unsigned()
         .references("skills.id")
         .notNullable()
@@ -125,6 +107,24 @@ exports.up = function(knex, Promise) {
       tbl.string("twitter");
     })
 
+    .createTable("student_skills", tbl => {
+      tbl.increments();
+      tbl
+        .integer("student_id")
+        .unsigned()
+        .references("students.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+      tbl
+        .integer("skill_id")
+        .unsigned()
+        .references("skills.id")
+        .notNullable()
+        .onDelete("CASCADE")
+        .onUpdate("CASCADE");
+    })
+
     .createTable("hired", tbl => {
       tbl.increments();
       tbl
@@ -141,6 +141,9 @@ exports.up = function(knex, Promise) {
 exports.down = function(knex, Promise) {
   return knex.schema
     .dropTableIfExists("accounts")
+    .dropTableIfExists("skills")
+    .dropTableIfExists("student_skills")
+    .dropTableIfExists("skill_types")
     .dropTableIfExists("hired")
     .dropTableIfExists("students")
     .dropTableIfExists("roles")

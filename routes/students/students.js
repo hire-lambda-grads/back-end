@@ -1,7 +1,7 @@
 const db = require("../../data/config");
 
 module.exports = {
-  getStudent,
+  getStudentForUpdate,
   getStudentById,
   getStudentCards,
   getStudentLocations,
@@ -9,134 +9,69 @@ module.exports = {
   updateStudent
 };
 
-function getStudent(account_id) {
+function getStudentForUpdate(account_id) {
   return new Promise(async (resolve, reject) => {
     try {
-      let student = await db("students")
-        .where({ account_id })
-        .select(
-          "cohort_id",
-          "profile_pic",
-          "location",
-          "relocatable",
-          "about",
-          "job_searching",
-          "website",
-          "github",
-          "linkedin",
-          "twitter"
-        )
-        .first();
+      let {
+        rows: [student]
+      } = await db.raw(
+        `select s.id, s.cohort_id, s.profile_pic, s.location, s.relocatable, s.about, s.job_searching, s.website, s.github, s.linkedin, s.twitter, array_agg(sk.skill) as skills from students as s left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id where s.account_id = ${account_id} group by s.id, s.cohort_id, s.profile_pic, s.location, s.relocatable, s.about, s.job_searching, s.website, s.github, s.linkedin, s.twitter`
+      );
       if (student) {
         const cohort_options = await db("cohorts").select(
           "id as cohort_id",
           "cohort_name"
         );
+        const skill_options = await db("skills").select(
+          "id as skill_id",
+          "skill"
+        );
         student = {
           ...student,
+          skill_options, //List of student's current skills
           cohort_options //So update form can have all cohort_id's to tie to a student
         };
         resolve(student);
       } else {
-        reject();
+        reject(Error("Could not locate student."));
       }
     } catch (error) {
-      reject();
+      reject(Error("Something went wrong fetching all student information."));
     }
   });
 }
 
 function getStudentById(id) {
-  return db("students")
-    .select(
-      "students.profile_pic",
-      "students.location",
-      "students.relocatable",
-      "students.about",
-      "students.job_searching",
-      "students.careers_approved",
-      "students.did_pm",
-      "students.website",
-      "students.github",
-      "students.linkedin",
-      "students.twitter",
-      "accounts.first_name",
-      "accounts.last_name",
-      "cohorts.cohort_name",
-      "cohort_types.type as track"
-    )
-    .innerJoin("accounts", "accounts.id", "students.account_id")
-    .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
-    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
-    .where({ "students.id": id })
-    .first();
+  return db.raw(
+    `select s.*, a.first_name, a.last_name, c.cohort_name, ct.type as track, array_agg(sk.skill) as skills from students as s join accounts as a on a.id = s.account_id left outer join cohorts as c on s.cohort_id = c.id left outer join cohort_types as ct on ct.id = c.cohort_type_id left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id where s.id = ${id} group by s.id, a.first_name, a.last_name, c.cohort_name, ct.type`
+  );
 }
 
 function getStudentCards() {
-  return db("students")
-    .select(
-      "students.id",
-      "students.profile_pic",
-      "students.location",
-      "students.relocatable",
-      "students.website",
-      "students.github",
-      "students.linkedin",
-      "students.twitter",
-      "students.careers_approved",
-      "accounts.first_name",
-      "accounts.last_name",
-      "cohorts.cohort_name",
-      "cohort_types.type as track"
-    )
-    .innerJoin("accounts", "accounts.id", "students.account_id")
-    .innerJoin("cohorts", "students.cohort_id", "cohorts.id")
-    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id");
-  // .where({ "students.job_searching": true });
+  return db.raw(
+    "select s.*, a.first_name, a.last_name, c.cohort_name, ct.type as track, array_agg(sk.skill) as skills from students as s join accounts as a on a.id = s.account_id left outer join cohorts as c on s.cohort_id = c.id left outer join cohort_types as ct on ct.id = c.cohort_type_id left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id group by s.id, a.first_name, a.last_name, c.cohort_name, ct.type"
+  );
 }
 
 function getStudentProfile(account_id) {
-  return db("students")
-    .select(
-      "students.profile_pic",
-      "students.location",
-      "students.relocatable",
-      "students.about",
-      "students.job_searching",
-      "students.careers_approved",
-      "students.did_pm",
-      "students.website",
-      "students.github",
-      "students.linkedin",
-      "students.twitter",
-      "accounts.first_name",
-      "accounts.last_name",
-      "cohorts.cohort_name",
-      "cohort_types.type as track"
-    )
-    .innerJoin("accounts", "accounts.id", "students.account_id")
-    .innerJoin("cohorts", "cohorts.id", "students.cohort_id")
-    .innerJoin("cohort_types", "cohorts.cohort_type_id", "cohort_types.id")
-    .where({ "students.account_id": account_id })
-    .first();
+  return db.raw(
+    `select s.*, a.first_name, a.last_name, c.cohort_name, ct.type as track, array_agg(sk.skill) as skills from students as s join accounts as a on a.id = s.account_id left outer join cohorts as c on s.cohort_id = c.id left outer join cohort_types as ct on ct.id = c.cohort_type_id left outer join student_skills as ss on ss.student_id = s.id left outer join skills as sk on sk.id = ss.skill_id where s.account_id = ${account_id} group by s.id, a.first_name, a.last_name, c.cohort_name, ct.type`
+  );
 }
 
 function getStudentLocations() {
-  return db("students")
-    .select("location", "job_searching")
-    .whereNotNull("location");
+  return db.raw(
+    "select a.first_name, a.last_name, s.location, s.profile_pic from students as s join accounts as a on a.id = s.account_id where s.location is not null"
+  );
 }
 
-function updateStudent(account_id, info) {
+function updateStudent(account_id, info, skills) {
   return new Promise(async (resolve, reject) => {
-    try {
-      await db("students")
-        .where({ account_id })
-        .update(info);
-
-      resolve(
-        db("students")
-          .select(
+    let student, newSkills;
+    await db.transaction(async t => {
+      try {
+        [student] = await db("students")
+          .update(info, [
             "cohort_id",
             "profile_pic",
             "location",
@@ -147,12 +82,35 @@ function updateStudent(account_id, info) {
             "github",
             "linkedin",
             "twitter"
-          )
+          ])
           .where({ account_id })
-          .first()
-      );
-    } catch (error) {
-      reject();
-    }
+          .transacting(t);
+
+        await db("student_skills")
+          .where({ student_id: info.id })
+          .del()
+          .transacting(t);
+
+        if (skills) {
+          skills = skills.map(id => ({ skill_id: id, student_id: info.id }));
+          await db("student_skills")
+            .insert(skills)
+            .transacting(t);
+
+          newSkills = await db("student_skills")
+            .select("skills.skill")
+            .innerJoin("skills", "skills.id", "student_skills.skill_id")
+            .where({ "student_skills.student_id": info.id })
+            .transacting(t);
+        }
+      } catch (error) {
+        t.rollback();
+        reject(error);
+      }
+    });
+    resolve({
+      ...student,
+      skills: newSkills.map(s => s.skill) || []
+    });
   });
 }
